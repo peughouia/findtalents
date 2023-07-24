@@ -4,7 +4,8 @@ import { StyleSheet,Text } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
 import Connexion from "../Auth/Connexion";
-import Register from "../Auth/Register";
+import Profile from "./Profile";
+import HomeCan from "./HomeCan";
 
 const tab = createBottomTabNavigator();
 
@@ -15,18 +16,22 @@ export default function HomeCandidate({Navigation}){
                         tabBarIcon: ({focused, color, size}) => {
                             let iconName ;
 
-                            if (route.name == "connexion"){
-                                iconName = focused ? 'home' : 'home-outline';
-                            }else if(route.name == "register"){
+                            if (route.name == "CV"){
                                 iconName = focused ? "document" : "document-outline"
+                            }else if(route.name == "homecan"){
+                                iconName = focused ? 'home' : 'home-outline';
+                            }else if(route.name == "Profil"){
+                                iconName = focused ? "clipboard" : "clipboard-outline"
                             }
-                            return <Ionicons name={iconName} size={30} color={"red"}/>
+                            return <Ionicons name={iconName} size={30} color={"orangered"}/>
                         }
                     })}
-                    >
-                        <tab.Screen name ='connexion' component={Connexion} 
+                    initialRouteName="homecan">
+                        <tab.Screen name ='CV' component={Connexion} 
                             options={{ headerShown:false }}/>
-                        <tab.Screen name ='register' component={Register} 
+                        <tab.Screen name ='homecan' component={HomeCan} 
+                            options={{ headerShown:false }}/>
+                        <tab.Screen name ='Profil' component={Profile} 
                             options={{ headerShown:false }}/>
                     </tab.Navigator>
     );

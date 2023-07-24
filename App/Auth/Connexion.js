@@ -122,7 +122,8 @@ const styles = StyleSheet.create({
         bottom: 100,
     },
     textwelcome :{
-            color: "#3589f2",
+            //color: "#3589f2",
+            color: "orangered",
             fontSize:40,
             fontWeight:"bold",
     },
@@ -163,7 +164,7 @@ const styles = StyleSheet.create({
     },
     //view et text du bouton
     vbouton:{
-        backgroundColor:"#3589f2",
+        backgroundColor:"orangered",
         borderRadius:13,
         width:300,
         height:33,

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import {Platform, View,Text,StyleSheet,ImageBackground, TextInput,
     TouchableOpacity,KeyboardAvoidingView, Alert } from "react-native";
 
@@ -6,17 +7,26 @@ import {Platform, View,Text,StyleSheet,ImageBackground, TextInput,
 import {getAuth, createUserWithEmailAndPassword} from "firebase/auth"
 import { initializeApp } from "firebase/app";
 import { firebaseConfig } from "../../config/firebase";
-
+//import { firebase } from "@react-native-firebase/firestore";
 
 export default function Register({navigation}){
 
     const [username, setUsername] = React.useState('')
     const [email, setEmail] = React.useState('')
     const [password, setPassword] = React.useState('')
+    const [confirmpassword, setConfirmPassword] = React.useState('')
+    const [validationMessage, setValidationMessage] = useState('')
+    const [isEnabled, setEnabled] = useState(true);
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
+    let validateAndSet = (value, valueToCompare, setValue) => {
+        value !== valueToCompare
+        ?setValidationMessage('password do not match')
+        : setValidationMessage('')
+        setValue(value)
+    }
 
     const handleCreateAccount = () => {
 
@@ -25,7 +35,7 @@ export default function Register({navigation}){
             console.log("Account created!")
             const user = userCredential.user;
             console.log(user)
-            Alert.alert("Account created")
+            Alert.alert('Success',"Account created")
             navigation.navigate('homecandidate')
         })
         .catch(error => {
@@ -33,6 +43,14 @@ export default function Register({navigation}){
             Alert.alert(error.message)
         })
     }
+
+    const afficherBoiteDialogue = () => {
+        if (username === '' || email ==='' || password === '' || confirmpassword==='') {
+          Alert.alert('Champ Vide !!', 'veuillez remplir tout les champs');
+        }else{
+            handleCreateAccount()
+        }
+      };
 
     return(
         <ImageBackground style={styles.contain}
@@ -51,6 +69,7 @@ export default function Register({navigation}){
                 </View>
 
                 <View style = {styles.ginput}>
+                    
                     <TextInput style = {styles.input2}
                     placeholder="Username"
                     value={ username }
@@ -68,13 +87,22 @@ export default function Register({navigation}){
                     placeholder="Password"
                     value={ password }
                     secureTextEntry
-                    onChangeText={text => setPassword(text)}
+                    onChangeText={(value) => validateAndSet(value,confirmpassword,setPassword)}
                     />
+
+                    <TextInput style = {styles.input2}
+                    placeholder="Confirm Password"
+                    value={ confirmpassword }
+                    secureTextEntry
+                    onChangeText={(value) => validateAndSet(value,password,setConfirmPassword)}
+                    />
+                    <Text style={{marginTop:10, color:"red"}}>{validationMessage}</Text>
                 </View>
 
-                    <TouchableOpacity style = {styles.vbouton}
-                    onPress = {handleCreateAccount}
-                    >
+                    <TouchableOpacity 
+                    onPress = {afficherBoiteDialogue}
+                    //disabled = {isEnabled}
+                    style = {styles.vbouton}>
                     <Text style={styles.bouton}>SignUp</Text>
                     </TouchableOpacity>
                 
@@ -126,7 +154,7 @@ const styles = StyleSheet.create({
         bottom: 100,
     },
     textwelcome :{
-            color: "#3589f2",
+            color: "orangered",
             fontSize:40,
             fontWeight:"bold"
     },
@@ -158,7 +186,7 @@ const styles = StyleSheet.create({
     },
     //view et text du bouton
     vbouton:{
-        backgroundColor:"#3589f2",
+        backgroundColor:"orangered",
         borderRadius:13,
         width:300,
         height:33,
