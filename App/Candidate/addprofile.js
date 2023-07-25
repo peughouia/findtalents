@@ -77,7 +77,7 @@ export default function Addprofile({navigation}){
         {image && <Image 
         style = {styles.image}
         source={{uri:image.uri}}/>}
-             <Button title='select image' onPress={pickImage}/>
+             <Button title='select' onPress={pickImage}/>
              <Button title='enregistrer' onPress={uploadImage}/>
              <Button title='select pdf' onPress={uploadFile}/>
         </SafeAreaView>
