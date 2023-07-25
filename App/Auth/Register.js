@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import {Platform, View,Text,StyleSheet,ImageBackground, TextInput,
     TouchableOpacity,KeyboardAvoidingView, Alert } from "react-native";
 

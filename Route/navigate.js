@@ -15,7 +15,7 @@ const Stack = createNativeStackNavigator()
 export default function Screenview(){
     return(
         <NavigationContainer>
-            <Stack.Navigator initialRouteName="addprofile">
+            <Stack.Navigator initialRouteName="connexion">
 
                 <Stack.Screen component={Connexion} name="connexion"
                     options={{ headerShown:false }}/>

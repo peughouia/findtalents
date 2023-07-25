@@ -1,9 +1,68 @@
-import { StyleSheet, Text, View,TouchableOpacity,ScrollView,TextInput } from 'react-native'
-import React from 'react'
+import { StyleSheet,Image, Text, View,TouchableOpacity,ScrollView,TextInput,KeyboardAvoidingView, Button, Alert, SafeAreaView } from 'react-native'
+import React, { useState } from 'react'
+import * as DocumentPicker from 'expo-document-picker'
+import * as ImagePicker from 'expo-image-picker'
+import { firebase } from '../../config/firebases'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
 
+
 export default function Addprofile({navigation}){
+
+    const [image, setImage] = useState(null);
+    const [uploading, setUploading] = useState(false)
+
+    const uploadFile = async () => {
+        try{
+            const file = await DocumentPicker.getDocumentAsync({
+                type:'application/pdf'
+            });
+
+            if(file.type === 'success'){
+                const response = await fetch(file.uri);
+                const blob = await response.blob();
+
+                const storageRef = firebase.storage().ref();
+                const pdfRef = storageRef.child('pdfs/' + file.name);
+
+                await pdfRef.put(blob);
+                console.log('Fichier Pdf telecharger avec sucess !');
+            }
+        }catch(err){
+            console.log('Erreur lors du telechargement :',err)
+        }
+    }
+
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes : ImagePicker.MediaTypeOptions.All,
+            allowsEditing:true,
+            aspect:[4,3],
+            quality:1
+        });
+
+        const src = {uri: result.assets[0].uri};
+        console.log(src);
+        setImage(src);
+    }
+
+    const uploadImage = async () => {
+        setUploading(true);
+        const response = await fetch(image.uri)
+        const blob = await response.blob();
+        const filename = image.uri.substring(image.uri.lastIndexOf('/') +1);
+        var ref = firebase.storage().ref().child(filename).put(blob);
+
+        try{
+                await ref;
+        }catch(err){
+            console.log(err)
+        }
+        setUploading(false);
+        Alert.alert('photo uploaded..!!');
+        setImage(null);
+    }
+    
 
     return(
     <View style = {styles.container}> 
@@ -14,10 +73,16 @@ export default function Addprofile({navigation}){
             </TouchableOpacity>   
         </View> 
 
-        <View style = {styles.image}>
-             
-        </View>
+        <SafeAreaView style = {styles.select}>
+        {image && <Image 
+        style = {styles.image}
+        source={{uri:image.uri}}/>}
+             <Button title='select image' onPress={pickImage}/>
+             <Button title='enregistrer' onPress={uploadImage}/>
+             <Button title='select pdf' onPress={uploadFile}/>
+        </SafeAreaView>
 
+        <KeyboardAvoidingView behavior = {Platform.OS === 'ios' ? 'padding' : null}>
         <ScrollView style = {styles.input}>
                 <Text style = {styles.txtnom}>Firstname</Text>
                 <TextInput style = {styles.textinput}></TextInput>
@@ -33,12 +98,14 @@ export default function Addprofile({navigation}){
                 <TextInput style = {styles.textinput}></TextInput>
             <View style = {styles.metier}>
                 <View>
-                <Text style = {styles.txtnom}>Metier</Text>
+                <Text style = {styles.txtnom}>Profession</Text>
                 <TextInput style = {styles.inputmet}></TextInput>
                 </View>
                 <View>
-                <Text style = {styles.txtnom}>Année EXP</Text>
-                <TextInput style = {styles.inputexp}></TextInput>
+                <Text style = {styles.txtnom}> EXP Year</Text>
+                <TextInput style = {styles.inputexp}
+                keyboardType='numeric'
+                ></TextInput>
                 </View>
             </View>
             <Text style = {styles.txtnom}>Your Description</Text>
@@ -48,6 +115,7 @@ export default function Addprofile({navigation}){
             ></TextInput>
             <Text style = {styles.space}></Text> 
         </ScrollView>  
+        </KeyboardAvoidingView>
     </View>
   )
 }
@@ -56,6 +124,17 @@ const styles = StyleSheet.create({
     container:{
      flex:1,
      alignItems:"center"
+    },
+    select:{
+        flexDirection:"row",
+        justifyContent:"space-between"
+    },
+    image:{
+        width:100,
+        height:100,
+        resizeMode: 'cover',
+        borderRadius: 20,
+        backgroundColor: 'gray',
     },
     title:{
         color: 'white',
