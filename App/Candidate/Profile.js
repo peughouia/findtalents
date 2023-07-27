@@ -1,6 +1,11 @@
-import { StyleSheet, Text, View,TouchableOpacity,ScrollView } from 'react-native'
-import React from 'react'
-import Ionicons from 'react-native-vector-icons/Ionicons'
+import React from 'react';
+import { Text,       
+         View,
+         StyleSheet,
+         ScrollView ,
+         TouchableOpacity,  
+       } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function Profile({navigation}){
 
@@ -14,7 +19,6 @@ export default function Profile({navigation}){
       </View>
       <View>
         <ScrollView>
-          
           <Text style = {styles.test1}></Text>
         </ScrollView>   
       </View>

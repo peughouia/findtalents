@@ -7,8 +7,10 @@ const HomeRecruiter = () => {
       <Text>HomeRecruiter</Text>
     </View>
   )
-}
+};
 
 export default HomeRecruiter
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+
+});

@@ -1,12 +1,22 @@
 import React, { useState } from "react";
-import {Platform, View,Text,StyleSheet,ImageBackground, TextInput,
-    TouchableOpacity,KeyboardAvoidingView, Alert } from "react-native";
-
 //importation por l'authentification
 import {getAuth, createUserWithEmailAndPassword} from "firebase/auth"
 import { initializeApp } from "firebase/app";
+import { doc,setDoc } from "firebase/firestore";
+import { getFirestore,collection,addDoc } from 'firebase/firestore'
 import { firebaseConfig } from "../../config/firebase";
-//import { firebase } from "@react-native-firebase/firestore";
+import {View,
+        Text, 
+        Alert,
+        Platform,
+        StyleSheet,
+        TextInput,
+        ImageBackground,
+        TouchableOpacity,
+        KeyboardAvoidingView} from "react-native";
+
+
+
 
 export default function Register({navigation}){
 
@@ -15,103 +25,136 @@ export default function Register({navigation}){
     const [password, setPassword] = React.useState('')
     const [confirmpassword, setConfirmPassword] = React.useState('')
     const [validationMessage, setValidationMessage] = useState('')
-    const [isEnabled, setEnabled] = useState(true);
-
+    //firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-
-    let validateAndSet = (value, valueToCompare, setValue) => {
+    const db = getFirestore(app)
+    const usersCollectionRef = collection(db, 'Users');
+    
+    
+    //ajouter le document de l'utilsateur 
+    const Adduser = () => {
+        const newUser = {
+            Username:username,
+            Email:email,
+        };
+        addDoc(usersCollectionRef,newUser)
+        .then((docRef)=>{
+            console.log("Document ajouter avec ID : ", docRef.id);
+        })
+        .catch((error) => {
+            console.log("erreur subvenue !!",error)
+        });
+    }
+    const Addusers = () => {
+        setDoc(doc(db, "Users","fred"), {
+            Username:username,
+            Email:email,
+          }).then(()=>{
+            console.log("Document ajouter avec ID :");
+        })
+        .catch((error) => {
+            console.log("erreur subvenue !!",error)
+        });
+    }
+    //creer le compte de l'utilisateur 
+    const handleCreateAccount = () => {
+        createUserWithEmailAndPassword(auth,email,password)
+        .then((userCredential) => {
+            console.log("Account created!")
+            const user = userCredential.user;
+            console.log(user.uid)
+            Alert.alert('Success',"Account created")
+            navigation.navigate('connexion')
+            Adduser()
+        })
+        .catch(error => {
+            console.log(error)
+            Alert.alert(error.message)
+        })  
+    }
+    
+    // verification des valeur des champs
+    const afficherBoiteDialogue = () => {
+        if (username === '' || email ==='' || password === '' || confirmpassword==='') {
+          Alert.alert('Champ Vide !!', 'veuillez remplir tout les champs');
+        }else{
+            if(password != confirmpassword){
+                Alert.alert('mot de passe different !!', 'verifiez votre mot de passe');
+            }else{
+                handleCreateAccount()
+            } 
+        }
+      };
+      let validateAndSet = (value, valueToCompare, setValue) => {
         value !== valueToCompare
         ?setValidationMessage('password do not match')
         : setValidationMessage('')
         setValue(value)
     }
 
-    const handleCreateAccount = () => {
-
-        createUserWithEmailAndPassword(auth,email,password)
-        .then((userCredential) => {
-            console.log("Account created!")
-            const user = userCredential.user;
-            console.log(user)
-            Alert.alert('Success',"Account created")
-            navigation.navigate('homecandidate')
-        })
-        .catch(error => {
-            console.log(error)
-            Alert.alert(error.message)
-        })
-    }
-
-    const afficherBoiteDialogue = () => {
-        if (username === '' || email ==='' || password === '' || confirmpassword==='') {
-          Alert.alert('Champ Vide !!', 'veuillez remplir tout les champs');
-        }else{
-            handleCreateAccount()
-        }
-      };
-
     return(
         <ImageBackground style={styles.contain}
-        source={require('../../assets/Image/font1.jpg')}
-        >
+        source={require('../../assets/Image/font1.jpg')}>
+
             <View style={styles.login}>
                 <Text style={styles.textlogin}>Register</Text>
             </View>
 
             <KeyboardAvoidingView behavior = {Platform.OS === 'ios' ? 'padding' : null}>
-            <View style={styles.cardContainer}>
-                
-                <View style = {styles.welcome}>
-                    <Text style = {styles.textwelcome}>Welcome</Text>
-                    <Text style = {styles.textaccount}>Create your new account</Text>
-                </View>
-
-                <View style = {styles.ginput}>
+                <View style={styles.cardContainer}>
                     
-                    <TextInput style = {styles.input2}
-                    placeholder="Username"
-                    value={ username }
-                    onChangeText={text => setUsername(text)}
-                    /> 
+                    <View style = {styles.welcome}>
+                        <Text style = {styles.textwelcome}>Welcome</Text>
+                        <Text style = {styles.textaccount}>Create your new account</Text>
+                    </View>
 
-                    <TextInput style = {styles.input2}
-                    placeholder="E-mail"
-                    value={ email }
-                    onChangeText={text => setEmail(text)}
-                    /> 
+                    <View style = {styles.ginput}>
+                        
+                        <TextInput style = {styles.input2}
+                        placeholder="Username"
+                        value={ username }
+                        onChangeText={text => setUsername(text)}
+                        /> 
+
+                        <TextInput style = {styles.input2}
+                        placeholder="E-mail"
+                        value={ email }
+                        onChangeText={text => setEmail(text)}
+                        /> 
+                        
                     
-                
-                    <TextInput style = {styles.input2}
-                    placeholder="Password"
-                    value={ password }
-                    secureTextEntry
-                    onChangeText={(value) => validateAndSet(value,confirmpassword,setPassword)}
-                    />
+                        <TextInput style = {styles.input2}
+                        placeholder="Password"
+                        value={ password }
+                        secureTextEntry
+                        onChangeText={(value) => validateAndSet(value,confirmpassword,setPassword)}
+                        />
 
-                    <TextInput style = {styles.input2}
-                    placeholder="Confirm Password"
-                    value={ confirmpassword }
-                    secureTextEntry
-                    onChangeText={(value) => validateAndSet(value,password,setConfirmPassword)}
-                    />
-                    <Text style={{marginTop:10, color:"red"}}>{validationMessage}</Text>
-                </View>
+                        <TextInput style = {styles.input2}
+                        placeholder="Confirm Password"
+                        value={ confirmpassword }
+                        secureTextEntry
+                        onChangeText={(value) => validateAndSet(value,password,setConfirmPassword)}
+                        />
+                        <Text style={{marginTop:10, color:"red"}}>{validationMessage}</Text>
+                    </View>
 
-                    <TouchableOpacity 
-                    onPress = {afficherBoiteDialogue}
-                    //disabled = {isEnabled}
-                    style = {styles.vbouton}>
-                    <Text style={styles.bouton}>SignUp</Text>
-                    </TouchableOpacity>
-                
-                <View style = {styles.vconnexion}>
-                        <Text>I Already have an account</Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('connexion')}>
-                        <Text style = {styles.textcon}> Connexion?</Text>
-                    </TouchableOpacity>
+                        <TouchableOpacity 
+                        onPress = {afficherBoiteDialogue}
+                        //disabled = {isEnabled}
+                        style = {styles.vbouton}>
+                        <Text style={styles.bouton}>SignUp</Text>
+                        </TouchableOpacity>
+                    
+                    <View style = {styles.vconnexion}>
+                            <Text>I Already have an account</Text>
+                        <TouchableOpacity onPress={() => navigation.navigate('connexion')}>
+                            <Text style = {styles.textcon}> Connexion?</Text>
+                        </TouchableOpacity>
+                    </View>
+                    
                 </View>
-            </View>
             </KeyboardAvoidingView>
       </ImageBackground>
     );

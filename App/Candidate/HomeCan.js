@@ -1,12 +1,21 @@
-import { StyleSheet, Text, View,TouchableOpacity,Image,TextInput } from 'react-native'
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import React from 'react'
+import React from 'react';
+import { Text,
+         View,
+         Image,
+         TextInput,
+         StyleSheet,
+         TouchableOpacity,
+       } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-export default function HomeCan({Navigation}){
+
+export default function HomeCan({navigation}){
 
     return(
     <View style = {styles.container}>
+
       <View style = {styles.header}>
+
             <View style = {styles.profil}>
                 <TouchableOpacity>
                     <Image style= {styles.img}
@@ -14,14 +23,17 @@ export default function HomeCan({Navigation}){
                     </Image>
                 </TouchableOpacity>
             </View>
+
             <View style = {styles.titre}>
                 <Text style={styles.txttitre}>FindTALENTS </Text>
             </View>
+
             <View style = {styles.chat}>
                 <TouchableOpacity >
                 <Ionicons name= "chatbubbles-outline" size = {35} color="black"/>
                 </TouchableOpacity>
             </View>
+
       </View>
 
       <View style = {styles.welcom}>
@@ -30,17 +42,19 @@ export default function HomeCan({Navigation}){
       </View>
 
       <View style = {styles.searchContainer}>
+        
           <View style = {styles.searchWrapper}>
               <TextInput style = {styles.searchInput}
                 //value=""
                 onChange={() => {}}
-                placeholder='search for one of your profiles'
-              />
+                placeholder='search for one of your profiles'/>
           </View>
+
           <TouchableOpacity style = {styles.searchBtn} onPress={() => {}}>
              <Ionicons name= "search-outline" size = {35} color="white"/>
           </TouchableOpacity>
-        </View>
+
+      </View>
       
     </View>
   );

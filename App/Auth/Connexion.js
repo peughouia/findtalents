@@ -1,34 +1,40 @@
 import React, { useState } from "react";
-import {Platform, View,Text,StyleSheet,ImageBackground, TextInput,
-      TouchableOpacity,KeyboardAvoidingView } from "react-native";
-
+import {View,
+        Text,
+        Platform,
+        TextInput,
+        StyleSheet,
+        ImageBackground,
+        TouchableOpacity,
+        KeyboardAvoidingView } from "react-native";
+//importation pour la connection
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 import { firebaseConfig } from "../../config/firebase";
 
+
 export default function Connexion({navigation}){
 
-
-    //variable pour recuperer dans les chaps de texte
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app)
-
-    const handleSignIn = () => {
-        signInWithEmailAndPassword(auth,email,password)
-        .then((userCredential) => {
-            console.log('signed in')
-            const user = userCredential.user;
-            console.log(user)
-            navigation.navigate('homecandidate')
-        })
-        .catch(error => {
-          console.log(error)
-          alert(error)
-        })
-}
+        //variable pour recuperer dans les chaps de texte
+        const [email, setEmail] = useState('');
+        const [password, setPassword] = useState('');
+        //variable pour firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app)
+        //fonction pour declancher la connection
+        const handleSignIn = () => {
+            signInWithEmailAndPassword(auth,email,password)
+            .then((userCredential) => {
+                console.log('signed in')
+                const user = userCredential.user;
+                console.log(user)
+                navigation.navigate('homecandidate')
+            })
+            .catch(error => {
+            console.log(error)
+            alert(error)
+            })
+        }
    
 
     return(  
@@ -39,9 +45,9 @@ export default function Connexion({navigation}){
                 <Text style={styles.textlogin}>Login</Text>
             </View>
 
-            <KeyboardAvoidingView behavior = {Platform.OS === 'ios' ? 'padding' : null}>
-            
+        <KeyboardAvoidingView behavior = {Platform.OS === 'ios' ? 'padding' : null}>
             <View style={styles.cardContainer}>
+
                 <View style = {styles.welcome}>
                     <Text style = {styles.textwelcome}>Welcome Back</Text>
                     <Text style = {styles.textaccount}>Login to your account</Text>
@@ -69,8 +75,7 @@ export default function Connexion({navigation}){
                 </View>
 
                 <TouchableOpacity style = {styles.vbouton}
-                onPress={handleSignIn}
-                >
+                onPress={handleSignIn}>
                     <Text style={styles.bouton}>Login</Text>
                 </TouchableOpacity>
                 
