@@ -6,10 +6,14 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import Connexion from "../Auth/Connexion";
 import Profile from "./Profile";
 import HomeCan from "./HomeCan";
+import Test from "./tes";
+import Test1 from "./test1";
+import AddCardScreen from "./test2";
+
 
 const tab = createBottomTabNavigator();
 
-export default function HomeCandidate({Navigation}){
+export default function HomeCandidate({navigation}){
     return(
         <tab.Navigator
             initialRouteName="homecan"
@@ -27,7 +31,7 @@ export default function HomeCandidate({Navigation}){
                 }
             })}>
 
-            <tab.Screen name ='CV' component={Connexion} 
+            <tab.Screen name ='CV' component={Test1} 
                 options={{ headerShown:false }}/>
             <tab.Screen name ='homecan' component={HomeCan} 
                 options={{ headerShown:false }}/>

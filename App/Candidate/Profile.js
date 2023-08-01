@@ -1,26 +1,58 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Text,       
          View,
+         Image,
          StyleSheet,
          ScrollView ,
-         TouchableOpacity,  
+         TouchableOpacity,
+         Button,  
        } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function Profile({navigation}){
 
+const [cards, setCards] = useState([]);
+
+const addCard = (nom,profession,exp,diplome,ville) => {
+  const newCard = {nom,profession,exp,diplome,ville};
+  setCards([ ...cards,newCard]);
+};
+
     return(
     <View style = {styles.container}>
       <View style = {styles.head}>
         <Text style={styles.title}>profiles</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('addprofile')}>
+        <TouchableOpacity onPress={() => navigation.navigate('addprofile',{ addCard })}>
           <Ionicons name= "add-circle-outline" size = {45} color="black"/>
         </TouchableOpacity>
       </View>
       <View>
-        <ScrollView>
-          <Text style = {styles.test1}></Text>
-        </ScrollView>   
+      <ScrollView>
+      {cards.map((card,index) => (
+        <View key = {index} style = {styles.contain}>
+          <TouchableOpacity style = {styles.cards} onPress={() => navigation.navigate('renderprofil')}>
+                  <View style = {styles.image}>
+                      <Image style = {styles.img}
+                        source={require('../../assets/Image/fred.jpg')}/>
+                  </View>
+                  <View style = {styles.texte}>
+                      <Text style = {styles.nom}>{card.nom}</Text>
+                      <Text style = {styles.ville}>{card.ville}</Text>
+                      <Text style = {styles.diploma}>{card.diplome}</Text>
+                      <View style = {styles.txtint}>
+                        <Text style = {styles.profession}>{card.profession}</Text>
+                        <Text style = {styles.exp}>{card.exp} years Exp</Text>
+                      </View>
+                  </View>
+                  <TouchableOpacity style = {styles.icon}>
+                        <Ionicons name= "send-sharp" size = {23} color="orangered"/>
+                        <Text>publish</Text>
+                    </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
+      ))}
+        <View style = {styles.tese}></View>
+      </ScrollView>  
       </View>
     </View>
   )
@@ -30,7 +62,7 @@ export default function Profile({navigation}){
 
 const styles = StyleSheet.create({
   container:{
-   
+    
   },
   head:{
     flexDirection: 'row',
@@ -46,9 +78,67 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   test:{
-    fontSize:120
+    fontSize:50
+  },
+  tese:{
+    marginTop:300
   },
   test1:{
     marginBottom:250
-  }
+  },
+  cards:{
+    margin: 10,
+    padding: 10, 
+    backgroundColor:"#fff",
+    flexDirection:"row",
+    fontWeight:"bold",
+    shadowOpacity:0.3,
+    shadowRadius:2,
+    shadowColor:"#333",
+    shadowOffset:{width:1,height:1},
+    elevation:5,
+    borderRadius:20,
+  },
+  img:{
+    width:70,
+    height:70,
+    marginVertical:6,
+    resizeMode: 'cover',
+    borderRadius: 20,
+    backgroundColor: 'gray',
+},
+image:{
+  justifyContent:'center',
+},
+texte:{
+  marginLeft:5,
+  justifyContent:'center',
+  width:"66%"
+},
+txtint:{
+  flexDirection:"row",
+},
+nom:{
+  fontSize:20,
+  fontWeight:'bold'
+},
+ville:{
+  fontSize:18,
+},
+diploma:{
+  fontSize:18,
+},
+profession:{
+  fontSize:14,
+  fontWeight:'bold'
+},
+exp:{
+  fontSize:13,
+  marginLeft:10,
+  fontWeight:'bold'
+},
+icon:{
+  alignItems:"center",
+  justifyContent:"center"
+}
 })

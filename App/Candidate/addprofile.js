@@ -19,13 +19,14 @@ import { getFirestore,collection,addDoc } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 
 
-export default function Addprofile({navigation}){
+export default function Addprofile({ navigation, route }){
 
     //variable de stockage de données
     const [image, setImage] = useState(null);
     const [pdf, setPdf] = useState(null);
     const [firstname, setFirstname] = useState("");
     const [lastname, setLastname] = useState("");
+    const [email, setEmail] = useState("");
     const [city, setCity] = useState("");
     const [phone, setPhone] = useState("");
     const [language, setLanguage] = useState("");
@@ -33,26 +34,35 @@ export default function Addprofile({navigation}){
     const [profession, setProfession] = useState("");
     const [experience, SetExperience] = useState("");
     const [description, setDescription] = useState("");
+    const [imageURL, setImageURL] = useState('');
     const [uploading, setUploading] = useState(false)
+
     //firebase
     const auth = getAuth();
     const currentUser = auth.currentUser;
     const db = getFirestore();
     const usersCollectionRef = collection(db, 'Profiles');
-   
+
+    const handleAddCard = () => {
+        route.params.addCard(firstname,profession,experience,diploma,city);
+        navigation.goBack();
+    }
+
 
     //ajouter les information du profile a firebase
     const addProfile = () => {
         const newUser = {
             Firstname: firstname,
             Lastname : lastname,
-            City :city, 
+            City :city,
+            Email:email, 
             Phone:phone,
             Language : language,
             LastDiploma: diploma,
             Profession : profession,
             YearOfExp: experience,
             Description:description,
+            ImageUrl : imageURL
         };
         addDoc(usersCollectionRef,newUser)
         .then((docRef)=>{
@@ -94,7 +104,6 @@ export default function Addprofile({navigation}){
             console.log('Erreur lors du telechargement :',err)
         }
     }
-
     //fonction pour recuperer une image a partir de mon appareil
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -109,7 +118,11 @@ export default function Addprofile({navigation}){
     }
     //fonction pour envoyer l'image sur firebase
     const uploadImage = async () => {
-        setUploading(true);
+
+        if(image == null){
+            Alert.alert('Image','veuillez ajouter une image svp')
+        }else{
+            setUploading(true);
         const response = await fetch(image.uri)
         const blob = await response.blob();
         const filename = image.uri.substring(image.uri.lastIndexOf('/') +1);
@@ -117,23 +130,29 @@ export default function Addprofile({navigation}){
         try{
                 await ref;
                 console.log("image uploader")
+                 takeUrlImg();
         }catch(err){
             console.log("image non uploader",err)
         }
         setUploading(false);
-       
-
+        //addProfile() 
+        }
+    }
+    const takeUrlImg = async () => {
         //pour recuperer l'url de l'image
+        
+        const filename = image.uri.substring(image.uri.lastIndexOf('/') +1);
         var storageref = firebase.storage().ref();
-        storageref.child('images/'+filename)
+        await storageref.child('images/'+filename)
         .getDownloadURL()
-        .then(function(url){
-                console.log(url)          
+        .then( function(url){
+              console.log(url)
+              setImageURL(url)
+              console.log("url :",imageURL )
         }).catch(function(error){
                 console.log("impossible",error)
         })
-
-         addProfile() 
+        
     }
     
 
@@ -144,7 +163,7 @@ export default function Addprofile({navigation}){
                 <Ionicons name= "arrow-back-outline" size = {40} color="white"/>
             </TouchableOpacity>
             <Text style = {styles.title}>Add your Profile</Text>
-            <TouchableOpacity onPress={uploadImage}>
+            <TouchableOpacity onPress={handleAddCard}>
             <Ionicons name= "save-outline" size = {40} color="white"/>
             </TouchableOpacity>   
         </View> 
@@ -186,18 +205,24 @@ export default function Addprofile({navigation}){
                             value={lastname}
                             onChangeText = {(text) => setLastname(text)}
                     />
-                                
-                    <Text style = {styles.txtnom}>City</Text>
-                    <TextInput style = {styles.textinput}
-                            value={city}
-                            onChangeText = {(text) => setCity(text)}
-                    />
 
                     <Text style = {styles.txtnom}>Phone</Text>
                     <TextInput style = {styles.textinput}
                             keyboardType='numeric'
                             value={phone}
                             onChangeText = {(text) => setPhone(text)}
+                    />
+
+                    <Text style = {styles.txtnom}>E-mail</Text>
+                    <TextInput style = {styles.textinput}
+                            value={email}
+                            onChangeText = {(text) => setEmail(text)}
+                    />
+                                
+                    <Text style = {styles.txtnom}>City</Text>
+                    <TextInput style = {styles.textinput}
+                            value={city}
+                            onChangeText = {(text) => setCity(text)}
                     />
 
                     <Text style = {styles.txtnom}>Language</Text>
@@ -232,7 +257,6 @@ export default function Addprofile({navigation}){
                             value={description}
                             onChangeText = {(text) => setDescription(text)}
                     />
-
                     <Text style = {styles.space}></Text> 
 
             </ScrollView>  
@@ -242,8 +266,7 @@ export default function Addprofile({navigation}){
 
 const styles = StyleSheet.create({
     container:{
-     flex:1,
-     alignItems:"center"
+     flex:1
     },
 
     card:{
@@ -361,12 +384,12 @@ const styles = StyleSheet.create({
 
     input:{
         marginTop:15,
-        width:350,
-        marginLeft:10
+        //width:350,
+        //marginLeft:10
     },
 
     textinput:{
-        //flex: 1,
+        flex: 1,
         fontSize:22,
         backgroundColor: "#ccc",
         marginRight:30,

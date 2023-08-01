@@ -153,7 +153,6 @@ export default function Register({navigation}){
                             <Text style = {styles.textcon}> Connexion?</Text>
                         </TouchableOpacity>
                     </View>
-                    
                 </View>
             </KeyboardAvoidingView>
       </ImageBackground>
