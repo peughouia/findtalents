@@ -9,9 +9,8 @@ import HomeCan from "../App/Candidate/HomeCan";
 import Profile from "../App/Candidate/Profile";
 import Addprofile from "../App/Candidate/addprofile";
 import RenderProfil from "../App/Candidate/RenderProfil";
-import Test from "../App/Candidate/tes";
-import Test1 from "../App/Candidate/test1";
-import AddCardScreen from "../App/Candidate/test2";
+import DestinationPage from "../App/Candidate/tes";
+import SourcePage from "../App/Candidate/test1";
 
 const Stack = createNativeStackNavigator()
 
@@ -45,13 +44,10 @@ export default function Screenview(){
                 <Stack.Screen component={RenderProfil} name="renderprofil"
                      options={{ headerShown:false}}/> 
 
-                <Stack.Screen component={Test} name="test"
+                <Stack.Screen component={DestinationPage} name="destinationpage"
                      options={{ headerShown:false}}/>   
 
-                <Stack.Screen component={Test1} name="test1"
-                     options={{ headerShown:false}}/>  
-
-                <Stack.Screen component={AddCardScreen} name="test2"
+                <Stack.Screen component={SourcePage} name="sourcepage"
                      options={{ headerShown:false}}/>    
             </Stack.Navigator>
         </NavigationContainer>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text,       
          View,
          Image,
@@ -8,40 +8,63 @@ import { Text,
          Button,  
        } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { firebase } from "../../config/firebases"
 
 export default function Profile({navigation}){
 
 const [cards, setCards] = useState([]);
+const [id, setid] = useState('');
+const todoref = firebase.firestore().collection('Profiles');
 
-const addCard = (nom,profession,exp,diplome,ville) => {
-  const newCard = {nom,profession,exp,diplome,ville};
-  setCards([ ...cards,newCard]);
-};
+    useEffect (() => {
+      todoref
+      .onSnapshot(
+        querySnapshot => {
+          const profil = []
+          querySnapshot.forEach((doc) => {
+              const {Firstname,City,LastDiploma,Profession,YearOfExp} = doc.data()
+              profil.push({
+                id:doc.id,
+                Firstname,
+                City,
+                LastDiploma,
+                Profession,
+                YearOfExp
+              })
+          })
+          //console.log("Data =>",profil)
+          setCards(profil)
+        }
+        )
+    },[])
+
+
+
 
     return(
     <View style = {styles.container}>
       <View style = {styles.head}>
         <Text style={styles.title}>profiles</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('addprofile',{ addCard })}>
+        <TouchableOpacity onPress={() => navigation.navigate('addprofile')}>
           <Ionicons name= "add-circle-outline" size = {45} color="black"/>
         </TouchableOpacity>
       </View>
       <View>
       <ScrollView>
       {cards.map((card,index) => (
-        <View key = {index} style = {styles.contain}>
-          <TouchableOpacity style = {styles.cards} onPress={() => navigation.navigate('renderprofil')}>
+        <View key = {index}>
+          <TouchableOpacity style = {styles.cards} onPress={() => navigation.navigate('renderprofil',card.id)}>
                   <View style = {styles.image}>
                       <Image style = {styles.img}
                         source={require('../../assets/Image/fred.jpg')}/>
                   </View>
                   <View style = {styles.texte}>
-                      <Text style = {styles.nom}>{card.nom}</Text>
-                      <Text style = {styles.ville}>{card.ville}</Text>
-                      <Text style = {styles.diploma}>{card.diplome}</Text>
+                      <Text style = {styles.nom}>{card.Firstname}</Text>
+                      <Text style = {styles.ville}>{card.City}</Text>
+                      <Text style = {styles.diploma}>{card.LastDiploma}</Text>
                       <View style = {styles.txtint}>
-                        <Text style = {styles.profession}>{card.profession}</Text>
-                        <Text style = {styles.exp}>{card.exp} years Exp</Text>
+                        <Text style = {styles.profession}>{card.Profession}</Text>
+                        <Text style = {styles.exp}>{card.YearOfExp} years Exp</Text>
                       </View>
                   </View>
                   <TouchableOpacity style = {styles.icon}>
@@ -62,7 +85,8 @@ const addCard = (nom,profession,exp,diplome,ville) => {
 
 const styles = StyleSheet.create({
   container:{
-    
+    backgroundColor:"lightgray",
+    flex:1
   },
   head:{
     flexDirection: 'row',
@@ -81,7 +105,7 @@ const styles = StyleSheet.create({
     fontSize:50
   },
   tese:{
-    marginTop:300
+    marginTop:150
   },
   test1:{
     marginBottom:250

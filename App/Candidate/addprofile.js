@@ -71,7 +71,7 @@ export default function Addprofile({ navigation, route }){
         .catch((error) => {
             console.log("erreur subvenue !!",error)
         });
-
+        handleAddCard()
         if (currentUser) {
             // L'utilisateur est connecté
             const userId = currentUser.uid;
@@ -163,7 +163,7 @@ export default function Addprofile({ navigation, route }){
                 <Ionicons name= "arrow-back-outline" size = {40} color="white"/>
             </TouchableOpacity>
             <Text style = {styles.title}>Add your Profile</Text>
-            <TouchableOpacity onPress={handleAddCard}>
+            <TouchableOpacity onPress={addProfile}>
             <Ionicons name= "save-outline" size = {40} color="white"/>
             </TouchableOpacity>   
         </View> 
@@ -306,8 +306,9 @@ const styles = StyleSheet.create({
         backgroundColor:"orangered",
         alignItems:"center",
         justifyContent:"center",
+        marginHorizontal:5,
         borderRadius:13,
-        width:100,
+        width:110,
         height:33,
         left:9
     },
@@ -325,6 +326,7 @@ const styles = StyleSheet.create({
     image:{
         width:120,
         height:100,
+        marginHorizontal:10,
         marginVertical:6,
         resizeMode: 'cover',
         borderRadius: 20,

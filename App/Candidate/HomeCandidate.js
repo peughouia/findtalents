@@ -3,12 +3,10 @@ import { StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from 'react-native-vector-icons/Ionicons'
 //importationde liaison 
-import Connexion from "../Auth/Connexion";
 import Profile from "./Profile";
 import HomeCan from "./HomeCan";
-import Test from "./tes";
-import Test1 from "./test1";
-import AddCardScreen from "./test2";
+import SourcePage from "./test1";
+
 
 
 const tab = createBottomTabNavigator();
@@ -31,7 +29,7 @@ export default function HomeCandidate({navigation}){
                 }
             })}>
 
-            <tab.Screen name ='CV' component={Test1} 
+            <tab.Screen name ='CV' component={SourcePage} 
                 options={{ headerShown:false }}/>
             <tab.Screen name ='homecan' component={HomeCan} 
                 options={{ headerShown:false }}/>

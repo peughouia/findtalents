@@ -12,11 +12,12 @@ import { initializeApp } from 'firebase/app';
 import * as FileSystem from 'expo-file-system'
 import {shareAsync} from 'expo-sharing'
 
-export default function RenderProfil() {
+export default function RenderProfil({route}) {
      //firestore
      const app = initializeApp(firebaseConfig)
      const db = getFirestore(app)
-     const docRef = doc(db, 'Profiles','SojpCINlTPuU7Dpl5woV');
+     const idi = route.params
+     const docRef = doc(db, 'Profiles',idi);
      const [users, setUsers] = useState(null);
 
     useEffect(() => {
@@ -74,7 +75,6 @@ export default function RenderProfil() {
     }
   return (
     <View style = {styles.container}>
-        
         <View style = {styles.card}>
         { users && (
             <View>
@@ -94,10 +94,11 @@ export default function RenderProfil() {
                     <Text style = {styles.text}>Lastname : {users.Lastname}</Text>
                     <Text style = {styles.text}>city : {users.City}</Text>
                     <Text style = {styles.text}>Language : {users.Language}</Text>
-                    <Text style = {styles.text}>Phone : {users.phone}</Text>
-                    <Text style = {styles.text}>Last Diploma : {users.Diploma}</Text>
+                    <Text style = {styles.text}>Phone : {users.Phone}</Text>
+                    <Text style = {styles.text}>Email : {users.Email}</Text>
+                    <Text style = {styles.text}>Last Diploma : {users.LastDiploma}</Text>
                     <Text style = {styles.text}>Profession : {users.Profession}</Text>
-                    <Text style = {styles.text}>Year of Profession : {users.Experiences} years</Text>
+                    <Text style = {styles.text}>Year of Profession : {users.YearOfExp} years</Text>
                     <Text style = {styles.text}>small description : {users.Description} years</Text>
                 </View>
             </ScrollView>
@@ -120,15 +121,13 @@ const styles = StyleSheet.create({
     container:{
         flex:1,
         justifyContent:'center',
-        alignItems:'center'
+        alignItems:'center',
+        backgroundColor:"lightgray",
     },
     card:{
-        //width:350,
-        //height:660,
-        margin: 10,
+        marginTop:50,
+        margin: 30,
         padding: 10,
-        //marginLeft:10,
-        //marginRight:10,
         borderRadius:20,
         elevation:5,
         backgroundColor:"#fff",
@@ -136,8 +135,8 @@ const styles = StyleSheet.create({
         shadowColor:"#333",
         shadowOpacity:0.3,
         shadowRadius:2,
-        marginHorizontal:4,
-        marginVertical:6,
+        marginHorizontal:12,
+        marginVertical:35,
     
     },
     head:{
@@ -146,9 +145,7 @@ const styles = StyleSheet.create({
         marginBottom:10
     },
     header:{
-        //alignItems:'center',
         justifyContent:"center",
-        //borderWidth:1,
         flexGrow:1,
         width:35
     },
