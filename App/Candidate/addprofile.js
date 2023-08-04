@@ -7,7 +7,8 @@ import { Text,
          TextInput,
          StyleSheet,
          ScrollView,
-         SafeAreaView, 
+         SafeAreaView,
+         ActivityIndicator, 
          TouchableOpacity,
          KeyboardAvoidingView,
         } from 'react-native'
@@ -19,11 +20,23 @@ import { getFirestore,collection,addDoc } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 
 
-export default function Addprofile({ navigation, route }){
+export default function Addprofile({ navigation }){
 
+    //fonction se soumission globale
+    const send = () =>{
+        if(image === null || firstname === ""  || lastname === "" ||
+           email === ""   || city === ""  || profession === "" || language === "" ||
+           diploma === "" || phone === "" || experience === "" || description === ""){
+            Alert.alert('Champ Vide !!', 'veuillez remplir tout les champs svp');
+           }else{
+            uploadImage()
+           }
+        }
+
+    const [isLoading, setIsLoading] = useState(false);
     //variable de stockage de données
     const [image, setImage] = useState(null);
-    const [pdf, setPdf] = useState(null);
+    const [pdf,setPdf]=useState(null)
     const [firstname, setFirstname] = useState("");
     const [lastname, setLastname] = useState("");
     const [email, setEmail] = useState("");
@@ -34,23 +47,18 @@ export default function Addprofile({ navigation, route }){
     const [profession, setProfession] = useState("");
     const [experience, SetExperience] = useState("");
     const [description, setDescription] = useState("");
-    const [imageURL, setImageURL] = useState('');
+    var pdfUrl = "" ;
     const [uploading, setUploading] = useState(false)
 
     //firebase
     const auth = getAuth();
     const currentUser = auth.currentUser;
+    const userId = currentUser.uid
     const db = getFirestore();
     const usersCollectionRef = collection(db, 'Profiles');
 
-    const handleAddCard = () => {
-        route.params.addCard(firstname,profession,experience,diploma,city);
-        navigation.goBack();
-    }
-
-
     //ajouter les information du profile a firebase
-    const addProfile = () => {
+    const addProfile = (id,imageURL,urlPdf) => {
         const newUser = {
             Firstname: firstname,
             Lastname : lastname,
@@ -62,7 +70,9 @@ export default function Addprofile({ navigation, route }){
             Profession : profession,
             YearOfExp: experience,
             Description:description,
-            ImageUrl : imageURL
+            ImageUrl : imageURL,
+            Iduser : id,
+            LinkPdf : urlPdf
         };
         addDoc(usersCollectionRef,newUser)
         .then((docRef)=>{
@@ -71,15 +81,6 @@ export default function Addprofile({ navigation, route }){
         .catch((error) => {
             console.log("erreur subvenue !!",error)
         });
-        handleAddCard()
-        if (currentUser) {
-            // L'utilisateur est connecté
-            const userId = currentUser.uid;
-            console.log('ID de l\'utilisateur courant:', userId);
-          } else {
-            // Aucun utilisateur connecté
-            console.log('Aucun utilisateur connecté');
-          }
     }
     //fonction pour recuperer un fichier a partir de mon appareil
     const uploadFile = async () => {
@@ -89,8 +90,8 @@ export default function Addprofile({ navigation, route }){
             });
             console.log(file.uri)
             setPdf(file.name)
-            
                 if(file.type === 'success'){
+                    setIsLoading(true)
                     const response = await fetch(file.uri);
                     const blob = await response.blob();
     
@@ -99,6 +100,13 @@ export default function Addprofile({ navigation, route }){
     
                     await pdfRef.put(blob);
                     console.log('Fichier Pdf telecharger avec sucess !'); 
+
+                    pdfRef
+                    .getDownloadURL()
+                    .then((url) => {
+                        console.log(url)
+                    })
+                    setIsLoading(false)
             }
         }catch(err){
             console.log('Erreur lors du telechargement :',err)
@@ -118,10 +126,10 @@ export default function Addprofile({ navigation, route }){
     }
     //fonction pour envoyer l'image sur firebase
     const uploadImage = async () => {
-
         if(image == null){
             Alert.alert('Image','veuillez ajouter une image svp')
         }else{
+            setIsLoading(true)
             setUploading(true);
         const response = await fetch(image.uri)
         const blob = await response.blob();
@@ -130,25 +138,29 @@ export default function Addprofile({ navigation, route }){
         try{
                 await ref;
                 console.log("image uploader")
-                 takeUrlImg();
+                takeUrlImg()
+                setIsLoading(false)
+                Alert.alert("Information","Enregistrement reussi",[
+                    {text:'OK',onPress: () => navigation.goBack()}
+                ],
+                {cancelable:false}
+                )
         }catch(err){
             console.log("image non uploader",err)
         }
         setUploading(false);
-        //addProfile() 
         }
     }
+
+    //pour recuperer l'url de l'image
     const takeUrlImg = async () => {
-        //pour recuperer l'url de l'image
-        
         const filename = image.uri.substring(image.uri.lastIndexOf('/') +1);
         var storageref = firebase.storage().ref();
         await storageref.child('images/'+filename)
         .getDownloadURL()
         .then( function(url){
               console.log(url)
-              setImageURL(url)
-              console.log("url :",imageURL )
+              addProfile(userId,url,pdfUrl)
         }).catch(function(error){
                 console.log("impossible",error)
         })
@@ -162,8 +174,16 @@ export default function Addprofile({ navigation, route }){
             <TouchableOpacity onPress={() =>  navigation.navigate('homecandidate')}>
                 <Ionicons name= "arrow-back-outline" size = {40} color="white"/>
             </TouchableOpacity>
-            <Text style = {styles.title}>Add your Profile</Text>
-            <TouchableOpacity onPress={addProfile}>
+            {isLoading?(
+                    <ActivityIndicator 
+                    size="large" 
+                    color="white"
+                    style = {styles.chargement}
+                     />
+            ):(
+                <Text style = {styles.title}>Add your Profile</Text>
+            )}
+            <TouchableOpacity onPress={send}>
             <Ionicons name= "save-outline" size = {40} color="white"/>
             </TouchableOpacity>   
         </View> 
@@ -252,6 +272,7 @@ export default function Addprofile({ navigation, route }){
 
                     <Text style = {styles.txtnom}>Your Description</Text>
                     <TextInput style = {styles.txtDescription}
+                            placeholder='you can talk about your qualities and your way of working or what you have already achieved'
                             multiline={true}
                             numberOfLines={4}
                             value={description}
@@ -295,6 +316,7 @@ const styles = StyleSheet.create({
         borderRadius:13,
         width:100,
         height:33, 
+        marginRight:30
     },
     txtselectpdf:{
         fontWeight:"bold",
@@ -306,7 +328,7 @@ const styles = StyleSheet.create({
         backgroundColor:"orangered",
         alignItems:"center",
         justifyContent:"center",
-        marginHorizontal:5,
+        marginHorizontal:15,
         borderRadius:13,
         width:110,
         height:33,
@@ -326,7 +348,7 @@ const styles = StyleSheet.create({
     image:{
         width:120,
         height:100,
-        marginHorizontal:10,
+        marginHorizontal:18,
         marginVertical:6,
         resizeMode: 'cover',
         borderRadius: 20,
@@ -378,7 +400,7 @@ const styles = StyleSheet.create({
     },
 
     txtnom:{
-        marginLeft:5,
+        marginLeft:27,
         fontSize:20,
         marginBottom:5,
         fontWeight:"bold"
@@ -400,7 +422,7 @@ const styles = StyleSheet.create({
         borderColor: 'white',
         justifyContent: "center",
         alignItems: "center",
-        borderRadius: 15,
+        //borderRadius: 10,
         height:40,
         marginTop:5,
         paddingHorizontal:16,

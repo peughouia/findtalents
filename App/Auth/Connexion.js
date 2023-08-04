@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import {View,
         Text,
         Platform,
+        Alert,
         TextInput,
         StyleSheet,
+        ActivityIndicator,
         ImageBackground,
         TouchableOpacity,
         KeyboardAvoidingView } from "react-native";
@@ -15,6 +17,7 @@ import { firebaseConfig } from "../../config/firebase";
 
 export default function Connexion({navigation}){
 
+        const [isLoading, setIsLoading] = useState(false);
         //variable pour recuperer dans les chaps de texte
         const [email, setEmail] = useState('');
         const [password, setPassword] = useState('');
@@ -23,16 +26,19 @@ export default function Connexion({navigation}){
         const auth = getAuth(app)
         //fonction pour declancher la connection
         const handleSignIn = () => {
+            setIsLoading(true);
             signInWithEmailAndPassword(auth,email,password)
             .then((userCredential) => {
                 console.log('signed in')
                 const user = userCredential.user;
-                console.log(user)
+                console.log(user.uid)
                 navigation.navigate('homecandidate')
+                setIsLoading(false);
             })
             .catch(error => {
-            console.log(error)
-            alert(error)
+                console.log(error)
+                    Alert.alert('Information','Email or password is not valid')
+                setIsLoading(false);
             })
         }
    
@@ -74,10 +80,19 @@ export default function Connexion({navigation}){
                     </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity style = {styles.vbouton}
-                onPress={handleSignIn}>
-                    <Text style={styles.bouton}>Login</Text>
-                </TouchableOpacity>
+                {   isLoading?(
+                    <ActivityIndicator 
+                    size="large" 
+                    color="orangered"
+                    style = {styles.chargement}
+                     />
+                ):(
+                    <TouchableOpacity style = {styles.vbouton}
+                        onPress={handleSignIn}>
+                        <Text style={styles.bouton}>Login</Text>
+                    </TouchableOpacity>
+                )}
+                
                 
                 <View style = {styles.vregister}>
                     <Text>I don't have an account</Text>

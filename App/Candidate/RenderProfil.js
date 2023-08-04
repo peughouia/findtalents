@@ -6,7 +6,7 @@ import { View,
          StyleSheet,
          ScrollView,
          TouchableOpacity } from 'react-native';
-import { getFirestore,collection,doc,setDoc,getDoc,getDocs,onSnapshot } from 'firebase/firestore';
+import { getFirestore,doc,getDoc } from 'firebase/firestore';
 import { firebaseConfig } from '../../config/firebase';
 import { initializeApp } from 'firebase/app';
 import * as FileSystem from 'expo-file-system'
@@ -36,22 +36,12 @@ export default function RenderProfil({route}) {
             }
         };
         fetchDatas();
-    }, []);
+    }, []);   
 
-   
-    const getdata = async () =>{
-        const docSnap = await getDoc(docRef);
-        if(docSnap.exists()){
-            console.log("document data:", docSnap.data())
-        }else{
-            console.log("No such document!");
-        }
-    }    
-
-    const downloadPdf = async () => {
+    const downloadPdf = async (url) => {
        const filename = 'CV.pdf'
        const result = await FileSystem.downloadAsync(
-            'https://firebasestorage.googleapis.com/v0/b/findtalents-cf59a.appspot.com/o/pdfs%2FPO-20230719-001186.pdf?alt=media&token=3fe46174-3820-41fb-a2d7-a18ace146d75',
+            url,
             FileSystem.documentDirectory + filename
        );
         console.log(result)
@@ -66,13 +56,6 @@ export default function RenderProfil({route}) {
         shareAsync(uri)
         Alert.alert("information","votre fichier va etre telecharger")
     };
-
-    const getAllData = async () => {
-        const querySnapshot = await getDocs(collection(db,'Profiles'));
-        querySnapshot.forEach((doc) => {
-            console.log(doc.id, " => ", doc.data());
-        })
-    }
   return (
     <View style = {styles.container}>
         <View style = {styles.card}>
@@ -81,12 +64,14 @@ export default function RenderProfil({route}) {
             <ScrollView style ={styles.enter}>
                 <View style ={styles.head}>
                     <Image style = {styles.img}
-                    source={{uri:"https://firebasestorage.googleapis.com/v0/b/findtalents-cf59a.appspot.com/o/images%2F079bbfa2-ba76-4b3b-b09e-27028989dc05.png?alt=media&token=02dd7c05-4859-4a61-8075-7cbd170d1bad"}
+                    source={{uri:users.ImageUrl}
                     //source={require('../../assets/Image/font1.jpg')
                 }/>
                     <View style ={styles.header}>
-                    <Text style = {styles.txthead}>Professionnal </Text>
-                    <Text style = {styles.txthead}>Profiles: {users.Profession}</Text>
+                    <Text style ={styles.txthead}>Professionnal</Text>
+                    <Text style ={styles.txthead}>Profiles:
+                    <Text style = {styles.txtpro}> {users.Profession}</Text>
+                    </Text>
                     </View>
                 </View>
                 <View>
@@ -106,7 +91,7 @@ export default function RenderProfil({route}) {
                     <TouchableOpacity style = {styles.vbouton}>
                         <Text style = {styles.bouton}>Contact</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style = {styles.vbouton} onPress={downloadPdf}>
+                    <TouchableOpacity style = {styles.vbouton} onPress={() => downloadPdf(users.LinkPdf)}>
                         <Text style = {styles.bouton}>Download cv</Text>
                     </TouchableOpacity>
                 </View>
@@ -125,9 +110,8 @@ const styles = StyleSheet.create({
         backgroundColor:"lightgray",
     },
     card:{
-        marginTop:50,
-        margin: 30,
-        padding: 10,
+        margin: 10,
+        padding: 15,
         borderRadius:20,
         elevation:5,
         backgroundColor:"#fff",
@@ -135,8 +119,7 @@ const styles = StyleSheet.create({
         shadowColor:"#333",
         shadowOpacity:0.3,
         shadowRadius:2,
-        marginHorizontal:12,
-        marginVertical:35,
+        marginVertical:45,
     
     },
     head:{
@@ -147,7 +130,7 @@ const styles = StyleSheet.create({
     header:{
         justifyContent:"center",
         flexGrow:1,
-        width:35
+        width:50,
     },
     txthead:{
         fontWeight:"700",
@@ -173,6 +156,9 @@ const styles = StyleSheet.create({
     text1:{
         fontSize:20,
         fontWeight:'bold',
+    },
+    txtpro:{
+        color:'orangered'
     },
     vbouton:{
         backgroundColor:"orangered",

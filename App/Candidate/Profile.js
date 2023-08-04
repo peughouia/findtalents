@@ -5,42 +5,69 @@ import { Text,
          StyleSheet,
          ScrollView ,
          TouchableOpacity,
-         Button,  
+         Alert,  
        } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { firebase } from "../../config/firebases"
+import { getFirestore,collection, query, where, getDocs } from "firebase/firestore";
+import { firebaseConfig } from '../../config/firebase'
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth'
 
 export default function Profile({navigation}){
+//current user
+const auth = getAuth()
+const currentuser = auth.currentUser
 
 const [cards, setCards] = useState([]);
-const [id, setid] = useState('');
-const todoref = firebase.firestore().collection('Profiles');
+const app = initializeApp(firebaseConfig)
+const db = getFirestore(app)
+const req = query(collection(db,"Profiles"), where ("Iduser","==",currentuser.uid));
 
-    useEffect (() => {
-      todoref
-      .onSnapshot(
-        querySnapshot => {
-          const profil = []
+    useEffect (  () => {
+      const fetchDatas = async () => {
+        const profil = []
+          const querySnapshot = await getDocs(req);
           querySnapshot.forEach((doc) => {
-              const {Firstname,City,LastDiploma,Profession,YearOfExp} = doc.data()
+              const {Firstname,City,LastDiploma,Profession,YearOfExp,ImageUrl} = doc.data();
               profil.push({
                 id:doc.id,
                 Firstname,
                 City,
                 LastDiploma,
                 Profession,
-                YearOfExp
+                YearOfExp,
+                ImageUrl
               })
           })
-          //console.log("Data =>",profil)
+          console.log("Data =>",profil)
           setCards(profil)
-        }
-        )
-    },[])
+      };
+      fetchDatas();     
+   },[])
 
+    const dialogBoite = (id) =>{
+      Alert.alert(
+        'Avertissement',
+        'voulez vous supprimer ce profil',
+        [
+          { text: 'Oui', onPress: () => deletes(id) },
+          { text: 'Non'}
+        ],
+        {cancelable:false}
+      )
+    }
 
-
-
+    const deletes = async (id) => { 
+      const documentRef = db.collection('Profiles').doc(id);
+      documentRef.delete()
+      .then(() => {
+        console.log('Document supprimé avec succès !');
+        Alert.alert('information', "le profil a bien été supprimé")
+      })
+      .catch(error => {
+        console.log('Erreur lors de suppression du doc:',error)
+      })
+    }
     return(
     <View style = {styles.container}>
       <View style = {styles.head}>
@@ -56,22 +83,29 @@ const todoref = firebase.firestore().collection('Profiles');
           <TouchableOpacity style = {styles.cards} onPress={() => navigation.navigate('renderprofil',card.id)}>
                   <View style = {styles.image}>
                       <Image style = {styles.img}
-                        source={require('../../assets/Image/fred.jpg')}/>
+                        source={{uri:card.ImageUrl}}/>
                   </View>
                   <View style = {styles.texte}>
-                      <Text style = {styles.nom}>{card.Firstname}</Text>
-                      <Text style = {styles.ville}>{card.City}</Text>
-                      <Text style = {styles.diploma}>{card.LastDiploma}</Text>
-                      <View style = {styles.txtint}>
-                        <Text style = {styles.profession}>{card.Profession}</Text>
-                        <Text style = {styles.exp}>{card.YearOfExp} years Exp</Text>
-                      </View>
+                      <Text style = {styles.nom}>Name: {card.Firstname}</Text>
+                      <Text style = {styles.ville}>City: {card.City}</Text>
+                      <Text style = {styles.diploma}>Last Diploma: {card.LastDiploma}</Text>
+                      <Text style = {styles.profession}>
+                        Profession: {card.Profession}
+                       <Text style = {styles.exp}>Since {card.YearOfExp} years Exp</Text>
+                      </Text>
                   </View>
-                  <TouchableOpacity style = {styles.icon}>
-                        <Ionicons name= "send-sharp" size = {23} color="orangered"/>
-                        <Text>publish</Text>
-                    </TouchableOpacity>
           </TouchableOpacity>
+          <View style = {styles.option}>
+              <TouchableOpacity style = {styles.update}>
+              <Ionicons name= "cloud-upload-sharp" size = {25} color="orangered"/>
+              </TouchableOpacity>
+              <TouchableOpacity style = {styles.delete} onPress={() => dialogBoite(card.id)}>
+              <Ionicons name= "trash-sharp" size = {25} color="orangered"/>
+              </TouchableOpacity>
+              <TouchableOpacity style = {styles.send}>
+              <Ionicons name= "send-sharp" size = {25} color="orangered"/>
+              </TouchableOpacity>
+          </View>
         </View>
       ))}
         <View style = {styles.tese}></View>
@@ -110,6 +144,34 @@ const styles = StyleSheet.create({
   test1:{
     marginBottom:250
   },
+  update:{
+    marginLeft:10,
+    marginBottom:5
+  },
+  send:{
+    marginRight:10,
+    marginBottom:5
+  },
+  delete:{
+    marginBottom:5
+  },
+  option:{
+    alignItems:"center",
+    marginLeft:30,
+    marginRight:30,
+    flexDirection:"row",
+    justifyContent:'space-between',
+    backgroundColor:"#fff",
+    bottom:10,
+    borderBottomLeftRadius:15,
+    borderBottomRightRadius:15,
+    shadowOffset:{width: 0,height: 4},
+    shadowRadius: 4,
+    shadowOpacity:0.3,
+    shadowRadius:2,
+    shadowColor:"black",
+    elevation: 5
+  },
   cards:{
     margin: 10,
     padding: 10, 
@@ -135,9 +197,10 @@ image:{
   justifyContent:'center',
 },
 texte:{
-  marginLeft:5,
+  marginLeft:13,
+  alignItems:"flex-start",
   justifyContent:'center',
-  width:"66%"
+  width:"76%",
 },
 txtint:{
   flexDirection:"row",
@@ -157,8 +220,8 @@ profession:{
   fontWeight:'bold'
 },
 exp:{
-  fontSize:13,
-  marginLeft:10,
+  fontSize:14,
+  marginLeft:5,
   fontWeight:'bold'
 },
 icon:{

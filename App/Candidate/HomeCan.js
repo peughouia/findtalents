@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState,useEffect} from 'react';
 import { Text,
          View,
          Image,
@@ -7,9 +7,47 @@ import { Text,
          TouchableOpacity,
        } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import { getFirestore,doc,getDoc, query, collection, where } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth'
+import { firebaseConfig } from '../../config/firebase'
+import { initializeApp } from 'firebase/app';
 
 export default function HomeCan({navigation}){
+
+    //current user 
+    const auth = getAuth()
+    const currentuser = auth.currentUser;
+    //firestore
+    const app = initializeApp(firebaseConfig)
+    const db = getFirestore(app)
+    const docRef = doc(db,'Users',currentuser.uid)
+    const [users, setUsers] = useState(null);
+
+    useEffect(() => {
+        const fetchDatas = async () => {
+          try{
+            const docSnap = await getDoc(docRef);
+            const userdata = docSnap.data()
+            if(docSnap.exists()){
+              console.log(userdata);
+              setUsers(docSnap.data())
+            }else{
+              console.log("No such document!");
+            }
+          }catch(error){
+            console.error('document non recuperer',error);
+          }
+          if (currentuser) {
+            // L'utilisateur est connecté
+            const userId = currentuser.uid;
+            console.log('ID de l\'utilisateur courant:', userId);
+          } else {
+            // Aucun utilisateur connecté
+            console.log('Aucun utilisateur connecté');
+          }
+        };
+        fetchDatas();
+    }, [])
 
     return(
     <View style = {styles.container}>
@@ -36,10 +74,14 @@ export default function HomeCan({navigation}){
 
       </View>
 
-      <View style = {styles.welcom}>
-        <Text style = {styles.txtwelcom}>Hello user</Text>
-        <Text style = {styles.txtmessage}>Post your CV and Profile Pro</Text>
-      </View>
+    <View style = {styles.welcom}>
+    { users && (
+            <Text style = {styles.txtwelcom}>Hello {users.Username}</Text>
+    )}
+            <Text style = {styles.txtmessage}>Post your CV and Profile Pro</Text>
+    </View>
+
+      
 
       <View style = {styles.searchContainer}>
         

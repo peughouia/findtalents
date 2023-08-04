@@ -9,7 +9,7 @@ import HomeCan from "../App/Candidate/HomeCan";
 import Profile from "../App/Candidate/Profile";
 import Addprofile from "../App/Candidate/addprofile";
 import RenderProfil from "../App/Candidate/RenderProfil";
-import DestinationPage from "../App/Candidate/tes";
+import tes from "../App/Candidate/tes";
 import SourcePage from "../App/Candidate/test1";
 
 const Stack = createNativeStackNavigator()
@@ -18,7 +18,7 @@ const Stack = createNativeStackNavigator()
 export default function Screenview(){
     return(
         <NavigationContainer>
-            <Stack.Navigator initialRouteName="homecandidate">
+            <Stack.Navigator initialRouteName="connexion">
 
                 <Stack.Screen component={Connexion} name="connexion"
                     options={{ headerShown:false }}/>
@@ -44,7 +44,7 @@ export default function Screenview(){
                 <Stack.Screen component={RenderProfil} name="renderprofil"
                      options={{ headerShown:false}}/> 
 
-                <Stack.Screen component={DestinationPage} name="destinationpage"
+                <Stack.Screen component={tes} name="tes"
                      options={{ headerShown:false}}/>   
 
                 <Stack.Screen component={SourcePage} name="sourcepage"

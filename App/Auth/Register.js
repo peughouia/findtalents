@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 //importation por l'authentification
 import {getAuth, createUserWithEmailAndPassword} from "firebase/auth"
 import { initializeApp } from "firebase/app";
 import { doc,setDoc } from "firebase/firestore";
 import { getFirestore,collection,addDoc } from 'firebase/firestore'
 import { firebaseConfig } from "../../config/firebase";
+import { firebase } from "../../config/firebases"
 import {View,
         Text, 
         Alert,
@@ -13,12 +14,17 @@ import {View,
         TextInput,
         ImageBackground,
         TouchableOpacity,
-        KeyboardAvoidingView} from "react-native";
+        ActivityIndicator,
+        KeyboardAvoidingView
+    } from "react-native";
 
 
 
 
 export default function Register({navigation}){
+    
+    const [isLoading, setIsLoading] = useState(false);
+    const [id, setId] = useState('f')
 
     const [username, setUsername] = React.useState('')
     const [email, setEmail] = React.useState('')
@@ -29,29 +35,17 @@ export default function Register({navigation}){
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app)
-    const usersCollectionRef = collection(db, 'Users');
     
-    
-    //ajouter le document de l'utilsateur 
-    const Adduser = () => {
-        const newUser = {
+    const Addusers = (id) => {
+        setIsLoading(false)
+        setDoc(doc(db, "Users",id), {
             Username:username,
             Email:email,
-        };
-        addDoc(usersCollectionRef,newUser)
-        .then((docRef)=>{
-            console.log("Document ajouter avec ID : ", docRef.id);
-        })
-        .catch((error) => {
-            console.log("erreur subvenue !!",error)
-        });
-    }
-    const Addusers = () => {
-        setDoc(doc(db, "Users","fred"), {
-            Username:username,
-            Email:email,
+            Id:id
           }).then(()=>{
-            console.log("Document ajouter avec ID :");
+            console.log("Document ajouter avec ID :",id);
+            setUsername(''), setEmail('')
+            setPassword(''), setConfirmPassword('')
         })
         .catch((error) => {
             console.log("erreur subvenue !!",error)
@@ -59,6 +53,7 @@ export default function Register({navigation}){
     }
     //creer le compte de l'utilisateur 
     const handleCreateAccount = () => {
+        setIsLoading(true);
         createUserWithEmailAndPassword(auth,email,password)
         .then((userCredential) => {
             console.log("Account created!")
@@ -66,7 +61,7 @@ export default function Register({navigation}){
             console.log(user.uid)
             Alert.alert('Success',"Account created")
             navigation.navigate('connexion')
-            Adduser()
+            Addusers(user.uid)
         })
         .catch(error => {
             console.log(error)
@@ -139,14 +134,20 @@ export default function Register({navigation}){
                         />
                         <Text style={{marginTop:10, color:"red"}}>{validationMessage}</Text>
                     </View>
-
+                    { isLoading ?(
+                         <ActivityIndicator 
+                         size="large" 
+                         color="orangered"
+                         style = {styles.chargement}
+                          />
+                    ):(
                         <TouchableOpacity 
                         onPress = {afficherBoiteDialogue}
                         //disabled = {isEnabled}
                         style = {styles.vbouton}>
                         <Text style={styles.bouton}>SignUp</Text>
                         </TouchableOpacity>
-                    
+                    )}
                     <View style = {styles.vconnexion}>
                             <Text>I Already have an account</Text>
                         <TouchableOpacity onPress={() => navigation.navigate('connexion')}>
@@ -226,6 +227,9 @@ const styles = StyleSheet.create({
         paddingHorizontal:15
     },
     //view et text du bouton
+    chargement:{
+        bottom:40
+    },
     vbouton:{
         backgroundColor:"orangered",
         borderRadius:13,

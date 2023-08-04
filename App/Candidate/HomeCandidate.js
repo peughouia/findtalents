@@ -6,7 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import Profile from "./Profile";
 import HomeCan from "./HomeCan";
 import SourcePage from "./test1";
-
+import Tes from "./tes";
 
 
 const tab = createBottomTabNavigator();
@@ -29,7 +29,7 @@ export default function HomeCandidate({navigation}){
                 }
             })}>
 
-            <tab.Screen name ='CV' component={SourcePage} 
+            <tab.Screen name ='CV' component={Tes} 
                 options={{ headerShown:false }}/>
             <tab.Screen name ='homecan' component={HomeCan} 
                 options={{ headerShown:false }}/>
