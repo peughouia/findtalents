@@ -32,7 +32,7 @@ export default function Connexion({navigation}){
                 console.log('signed in')
                 const user = userCredential.user;
                 console.log(user.uid)
-                navigation.navigate('homecandidate')
+                navigation.navigate('transit')
                 setIsLoading(false);
             })
             .catch(error => {

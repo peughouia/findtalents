@@ -12,6 +12,7 @@ import { Text,
          TouchableOpacity,
          KeyboardAvoidingView,
         } from 'react-native'
+import { MaterialCommunityIcons,MaterialIcons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker'
 import * as ImagePicker from 'expo-image-picker'
 import { firebase } from '../../config/firebases'
@@ -32,8 +33,9 @@ export default function Addprofile({ navigation }){
             uploadImage()
            }
         }
-
+    const [borderColor, setBorderColor] = useState('#ccc');
     const [isLoading, setIsLoading] = useState(false);
+    const [publish, setPublish] = useState(false);
     //variable de stockage de données
     const [image, setImage] = useState(null);
     const [pdf,setPdf]=useState(null)
@@ -47,7 +49,9 @@ export default function Addprofile({ navigation }){
     const [profession, setProfession] = useState("");
     const [experience, SetExperience] = useState("");
     const [description, setDescription] = useState("");
-    var pdfUrl = "" ;
+    var sizeicon=30
+    var coloricon="orangered"
+    var pdfUrl = "";
     const [uploading, setUploading] = useState(false)
 
     //firebase
@@ -72,7 +76,8 @@ export default function Addprofile({ navigation }){
             Description:description,
             ImageUrl : imageURL,
             Iduser : id,
-            LinkPdf : urlPdf
+            LinkPdf : urlPdf,
+            Publish:publish
         };
         addDoc(usersCollectionRef,newUser)
         .then((docRef)=>{
@@ -167,12 +172,19 @@ export default function Addprofile({ navigation }){
         
     }
     
+    const handleFocus = () => {
+        setBorderColor('orangered');
+      };
+
+      const handleBlur = () => {
+        setBorderColor('#ccc');
+      };
 
     return(
     <View style = {styles.container}> 
         <View style = {styles.head}>
             <TouchableOpacity onPress={() =>  navigation.navigate('homecandidate')}>
-                <Ionicons name= "arrow-back-outline" size = {40} color="white"/>
+                <Ionicons name= "arrow-back-outline" size = {35} color="white"/>
             </TouchableOpacity>
             {isLoading?(
                     <ActivityIndicator 
@@ -184,7 +196,8 @@ export default function Addprofile({ navigation }){
                 <Text style = {styles.title}>Add your Profile</Text>
             )}
             <TouchableOpacity onPress={send}>
-            <Ionicons name= "save-outline" size = {40} color="white"/>
+            
+            <Ionicons name= "save-outline" size = {35} color="white"/>
             </TouchableOpacity>   
         </View> 
 
@@ -214,70 +227,120 @@ export default function Addprofile({ navigation }){
                         </View>
                     </SafeAreaView>
 
-                    <Text style = {styles.txtnom}>Firstname</Text>
-                    <TextInput style = {styles.textinput}
-                            value = { firstname }
-                            onChangeText = {(text) => setFirstname(text)}
-                    />
+                    <View style={[styles.inputContainer,{ borderColor: borderColor }]}>
+                    <Ionicons name="person-outline" size={sizeicon} color= {coloricon} />
+                        <TextInput //style={styles.inpute}
+                         style={styles.inpute}
+                         onFocus={handleFocus}
+                         onBlur={handleBlur}
+                         placeholder="Enter your Firstname" 
+                         value = { firstname }
+                         onChangeText = {(text) => setFirstname(text)}
+                        />
+                    </View>
 
-                    <Text style = {styles.txtnom}>Lastname</Text>
-                    <TextInput style = {styles.textinput}
-                            value={lastname}
-                            onChangeText = {(text) => setLastname(text)}
-                    />
+                    <View style={[styles.inputContainer,{ borderColor: borderColor }]}>
+                    <Ionicons name="person-circle-outline" size={sizeicon} color={coloricon} />
+                        <TextInput style={styles.inpute}
+                         onFocus={handleFocus}
+                         onBlur={handleBlur}
+                         placeholder="Enter your Lastname" 
+                         value = { lastname }
+                         onChangeText = {(text) => setLastname(text)}
+                        />
+                    </View>
 
-                    <Text style = {styles.txtnom}>Phone</Text>
-                    <TextInput style = {styles.textinput}
-                            keyboardType='numeric'
-                            value={phone}
-                            onChangeText = {(text) => setPhone(text)}
-                    />
+                    <View style={[styles.inputContainer,{ borderColor: borderColor }]}>
+                    <Ionicons name="ios-call-outline" size={sizeicon} color={coloricon} />
+                        <TextInput style={styles.inpute}
+                         onFocus={handleFocus}
+                         onBlur={handleBlur}
+                         keyboardType='numeric'
+                         placeholder="Enter your Phone number" 
+                         value = { phone }
+                         onChangeText = {(text) => setPhone(text)}
+                        />
+                    </View>
 
-                    <Text style = {styles.txtnom}>E-mail</Text>
-                    <TextInput style = {styles.textinput}
-                            value={email}
-                            onChangeText = {(text) => setEmail(text)}
-                    />
+                    <View style={[styles.inputContainer,{ borderColor: borderColor }]}>
+                    <Ionicons name="mail-outline" size={sizeicon} color={coloricon} />
+                        <TextInput style={styles.inpute}
+                         onFocus={handleFocus}
+                         onBlur={handleBlur}
+                         placeholder="Enter your Email" 
+                         value = { email }
+                         onChangeText = {(text) => setEmail(text)}
+                        />
+                    </View>
+
+                    <View style={[styles.inputContainer,{ borderColor: borderColor }]}>
+                    <MaterialCommunityIcons name="city" size={sizeicon} color={coloricon} />
+                        <TextInput style={styles.inpute}
+                         onFocus={handleFocus}
+                         onBlur={handleBlur}
+                         placeholder="Enter your City" 
+                         value = { city }
+                         onChangeText = {(text) => setCity(text)}
+                        />
+                    </View>
                                 
-                    <Text style = {styles.txtnom}>City</Text>
-                    <TextInput style = {styles.textinput}
-                            value={city}
-                            onChangeText = {(text) => setCity(text)}
-                    />
+                    <View style={[styles.inputContainer,{ borderColor: borderColor }]}>
+                    <Ionicons name="language-outline" size={sizeicon} color={coloricon} />
+                        <TextInput style={styles.inpute}
+                         onFocus={handleFocus}
+                         onBlur={handleBlur}
+                         placeholder="Enter your Language" 
+                         value = { language }
+                         onChangeText = {(text) => setLanguage(text)}
+                        />
+                    </View>
+                        
+                    <View style={[styles.inputContainer,{ borderColor: borderColor }]}>
+                    <Ionicons name="document-outline" size={sizeicon} color={coloricon} />
+                        <TextInput style={styles.inpute}
+                         onFocus={handleFocus}
+                         onBlur={handleBlur}
+                         placeholder="Enter your Last Diploma" 
+                         value = { diploma }
+                         onChangeText = {(text) => setDiploma(text)}
+                        />
+                    </View>
 
-                    <Text style = {styles.txtnom}>Language</Text>
-                    <TextInput style = {styles.textinput}
-                            value={language}
-                            onChangeText = {(text) => setLanguage(text)}
-                    />
+                    <View style={[styles.inputContainer,{ borderColor: borderColor }]}>
+                    <MaterialIcons name="work-outline" size={sizeicon} color={coloricon} />
+                        <TextInput style={styles.inpute}
+                         onFocus={handleFocus}
+                         onBlur={handleBlur}
+                         placeholder="Enter your Profession" 
+                         value = { profession }
+                         onChangeText = {(text) => setProfession(text)}
+                        />
+                    </View>
 
-                    <Text style = {styles.txtnom}>Last Diploma</Text>
-                    <TextInput style = {styles.textinput}
-                            value={diploma}
-                            onChangeText = {(text) => setDiploma(text)}
-                    />
-
-                    <Text style = {styles.txtnom}>Profession</Text>
-                    <TextInput style = {styles.textinput}
-                            value={profession}
-                            onChangeText = {(text) => setProfession(text)} 
-                    />
-
-                    <Text style = {styles.txtnom}> EXP Year</Text>
-                    <TextInput style = {styles.textinput}
-                            keyboardType='numeric'
-                            value={experience}
-                            onChangeText = {(text) => SetExperience(text)}
-                    />
-
-                    <Text style = {styles.txtnom}>Your Description</Text>
-                    <TextInput style = {styles.txtDescription}
-                            placeholder='you can talk about your qualities and your way of working or what you have already achieved'
-                            multiline={true}
-                            numberOfLines={4}
-                            value={description}
-                            onChangeText = {(text) => setDescription(text)}
-                    />
+                    <View style={[styles.inputContainer,{ borderColor: borderColor }]}>
+                    <Ionicons name="calendar-outline" size={sizeicon} color={coloricon} />
+                        <TextInput style={styles.inpute}
+                         onFocus={handleFocus}
+                         onBlur={handleBlur}
+                         keyboardType='numeric'
+                         placeholder="your number of years of experience" 
+                         value = { experience }
+                         onChangeText = {(text) => SetExperience(text)}
+                        />
+                    </View>
+                    <View style = {styles.txtnom}>
+                        <Text style = {styles.txtnom}>Enter Your Description</Text>
+                        <TextInput style={[styles.txtDescription,{ borderColor: borderColor }]}
+                                onFocus={handleFocus}
+                                onBlur={handleBlur}
+                                placeholder='you can talk about your qualities and your way of working or what you have already achieved'
+                                multiline={true}
+                                numberOfLines={4}
+                                value={description}
+                                onChangeText = {(text) => setDescription(text)}
+                        />
+                    </View>
+                    
                     <Text style = {styles.space}></Text> 
 
             </ScrollView>  
@@ -400,7 +463,8 @@ const styles = StyleSheet.create({
     },
 
     txtnom:{
-        marginLeft:27,
+        alignItems:"center",
+        
         fontSize:20,
         marginBottom:5,
         fontWeight:"bold"
@@ -408,8 +472,6 @@ const styles = StyleSheet.create({
 
     input:{
         marginTop:15,
-        //width:350,
-        //marginLeft:10
     },
 
     textinput:{
@@ -430,17 +492,35 @@ const styles = StyleSheet.create({
 
     txtDescription:{
         backgroundColor: "white",
-        marginRight:30,
-        marginLeft:30,
+        marginRight:25,
+        marginLeft:25,
         textAlignVertical: 'top',
-        height: 120,
+        height: 125,
         borderWidth: 1,
         borderColor: '#808080',
         borderRadius: 15,
         padding: 10,
         fontSize: 16,
     },
-
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderColor: '#ccc',
+        marginRight:30,
+        marginLeft:30,
+        marginTop:25,
+        margin:10,
+       //borderRightWidth:1,
+       //borderLeftWidth:1,
+        borderBottomRightRadius: 1,
+        borderBottomLeftRadius: 1,
+      },
+      inpute:{
+        flex: 1,
+        paddingLeft: 10,
+        fontSize:20,
+      },
     space:{
         marginTop:100
     }

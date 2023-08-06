@@ -78,7 +78,7 @@ export default function HomeCan({navigation}){
     { users && (
             <Text style = {styles.txtwelcom}>Hello {users.Username}</Text>
     )}
-            <Text style = {styles.txtmessage}>Post your CV and Profile Pro</Text>
+            <Text style = {styles.txtmessage}>create and post your Profile Pro</Text>
     </View>
 
       

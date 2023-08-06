@@ -8,7 +8,9 @@ import HomeRecruiter from "../App/Recruiter/HomeRecruiter";
 import HomeCan from "../App/Candidate/HomeCan";
 import Profile from "../App/Candidate/Profile";
 import Addprofile from "../App/Candidate/addprofile";
+import UpdateProfil from "../App/Candidate/UpdateProfil";
 import RenderProfil from "../App/Candidate/RenderProfil";
+import Transit from "../App/Auth/Transit";
 import tes from "../App/Candidate/tes";
 import SourcePage from "../App/Candidate/test1";
 
@@ -48,7 +50,12 @@ export default function Screenview(){
                      options={{ headerShown:false}}/>   
 
                 <Stack.Screen component={SourcePage} name="sourcepage"
-                     options={{ headerShown:false}}/>    
+                     options={{ headerShown:false}}/>   
+
+                <Stack.Screen component={UpdateProfil} name="updateprofil"
+                     options={{ headerShown:false}}/>   
+                <Stack.Screen component={Transit} name="transit"
+                     options={{ headerShown:false}}/> 
             </Stack.Navigator>
         </NavigationContainer>
     )

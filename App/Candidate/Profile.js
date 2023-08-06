@@ -91,13 +91,13 @@ const req = query(collection(db,"Profiles"), where ("Iduser","==",currentuser.ui
                       <Text style = {styles.diploma}>Last Diploma: {card.LastDiploma}</Text>
                       <Text style = {styles.profession}>
                         Profession: {card.Profession}
-                       <Text style = {styles.exp}>Since {card.YearOfExp} years Exp</Text>
+                       <Text style = {styles.exp}> Since {card.YearOfExp} years Exp</Text>
                       </Text>
                   </View>
           </TouchableOpacity>
           <View style = {styles.option}>
               <TouchableOpacity style = {styles.update}>
-              <Ionicons name= "cloud-upload-sharp" size = {25} color="orangered"/>
+              <Ionicons name= "create-outline" size = {25} color="orangered" onPress={() => navigation.navigate('updateprofil',card.id)}/>
               </TouchableOpacity>
               <TouchableOpacity style = {styles.delete} onPress={() => dialogBoite(card.id)}>
               <Ionicons name= "trash-sharp" size = {25} color="orangered"/>
