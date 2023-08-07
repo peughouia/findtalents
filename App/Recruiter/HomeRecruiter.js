@@ -5,11 +5,12 @@ import { Text,
          Image,
          TextInput,
          StyleSheet,
-         TouchableOpacity,
          ScrollView,
+         TouchableOpacity,
+         RefreshControl
        } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { getFirestore,doc,getDoc, query, collection, where } from 'firebase/firestore';
+import { getFirestore,doc,getDoc, query, collection, where,getDocs } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth'
 import { firebaseConfig } from '../../config/firebase'
 import { initializeApp } from 'firebase/app';
@@ -19,37 +20,71 @@ export default function HomeRecruiter({navigation}){
     //current user 
     const auth = getAuth()
     const currentuser = auth.currentUser;
+    const [refreshing, setRefreshing] = useState(false);
+
+    
+
     //firestore
     const app = initializeApp(firebaseConfig)
     const db = getFirestore(app)
     const docRef = doc(db,'Users',currentuser.uid)
     const [users, setUsers] = useState(null);
 
+    //pour profil
+    const [cards, setCards] = useState([]);
+    const req = query(collection(db,"Profiles"), where ("Publish","==",true));
+
+    const fetchDatas = async () => {
+      try{
+        const profil = []
+        const querySnapshot = await getDocs(req);
+        querySnapshot.forEach((doc) => {
+          const {Firstname,City,LastDiploma,Profession,YearOfExp,ImageUrl,Publish} = doc.data();
+          profil.push({
+            id:doc.id,
+            Firstname,
+            City,
+            LastDiploma,
+            Profession,
+            YearOfExp,
+            ImageUrl,
+            Publish
+          })
+      })
+      setCards(profil)
+      setRefreshing(false);
+      console.log(profil)
+
+        const docSnap = await getDoc(docRef);
+        const userdata = docSnap.data()
+        if(docSnap.exists()){
+          console.log(userdata);
+          setUsers(docSnap.data())
+        }else{
+          console.log("No such document!");
+        }
+      }catch(error){
+        console.error('document non recuperer',error);
+      }
+      if (currentuser) {
+        // L'utilisateur est connecté
+        const userId = currentuser.uid;
+        console.log('ID de l\'utilisateur courant:', userId);
+      } else {
+        // Aucun utilisateur connecté
+        console.log('Aucun utilisateur connecté');
+      }
+    };
+
     useEffect(() => {
-        const fetchDatas = async () => {
-          try{
-            const docSnap = await getDoc(docRef);
-            const userdata = docSnap.data()
-            if(docSnap.exists()){
-              console.log(userdata);
-              setUsers(docSnap.data())
-            }else{
-              console.log("No such document!");
-            }
-          }catch(error){
-            console.error('document non recuperer',error);
-          }
-          if (currentuser) {
-            // L'utilisateur est connecté
-            const userId = currentuser.uid;
-            console.log('ID de l\'utilisateur courant:', userId);
-          } else {
-            // Aucun utilisateur connecté
-            console.log('Aucun utilisateur connecté');
-          }
-        };
         fetchDatas();
     }, [])
+
+    const handleRefresh = () => {
+      setRefreshing(true);
+      fetchDatas();
+    };
+  
 
     return(
     <View style = {styles.container}>
@@ -89,13 +124,30 @@ export default function HomeRecruiter({navigation}){
              <Ionicons name= "search-outline" size = {35} color="white"/>
           </TouchableOpacity>
       </View>
-      <ScrollView style = {styles.scroll}>
-        <Text style = {styles.txt}>fred</Text>
-        <Text style = {styles.txt}>fred</Text>
-        <Text style = {styles.txt}>fred</Text>
-        <Text style = {styles.txt}>fred</Text>
-        <Text style = {styles.txt}>fred</Text>
-        <Text style = {styles.txt}>fred</Text>
+      <ScrollView style = {styles.scroll}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }
+      >
+      {cards.map((card,index) => (
+        <View key = {index}>
+      <TouchableOpacity style = {styles.cards} onPress={() => navigation.navigate('renderprofil',card.id)}>
+                  <View style = {styles.image}>
+                      <Image style = {styles.img}
+                        source={{uri:card.ImageUrl}}/>
+                  </View>
+                  <View style = {styles.texte}>
+                      <Text style = {styles.nom}>Name: {card.Firstname}</Text>
+                      <Text style = {styles.ville}>City: {card.City}</Text>
+                      <Text style = {styles.diploma}>Last Diploma: {card.LastDiploma}</Text>
+                      <Text style = {styles.profession}>
+                        Profession: {card.Profession}
+                       <Text style = {styles.exp}> Since {card.YearOfExp} years Exp</Text>
+                      </Text>
+                  </View>
+          </TouchableOpacity>
+        </View>
+        ))}
         <Text style = {styles.space}></Text> 
       </ScrollView> 
     </View>
@@ -186,6 +238,56 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
       },
+
+      cards:{
+        margin: 10,
+        padding: 10, 
+        backgroundColor:"#fff",
+        flexDirection:"row",
+        fontWeight:"bold",
+        shadowOpacity:0.3,
+        shadowRadius:2,
+        shadowColor:"#333",
+        shadowOffset:{width:1,height:1},
+        elevation:5,
+        borderRadius:20,
+      },
+      image:{
+        justifyContent:'center',
+      },
+      img:{
+        width:70,
+        height:70,
+        marginVertical:6,
+        resizeMode: 'cover',
+        borderRadius: 20,
+        backgroundColor: 'gray',
+    },
+    texte:{
+      marginLeft:13,
+      alignItems:"flex-start",
+      justifyContent:'center',
+      width:"76%",
+    },
+    nom:{
+      fontSize:20,
+      fontWeight:'bold'
+    },
+    ville:{
+      fontSize:18,
+    },
+    diploma:{
+      fontSize:18,
+    },
+    profession:{
+      fontSize:14,
+      fontWeight:'bold'
+    },
+    exp:{
+      fontSize:14,
+      marginLeft:5,
+      fontWeight:'bold'
+    },
       space:{
         marginTop:100
     }

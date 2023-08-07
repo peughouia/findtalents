@@ -6,44 +6,92 @@ import { Text,
          ScrollView ,
          TouchableOpacity,
          Alert,  
+         RefreshControl
        } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getFirestore,collection, query, where, getDocs } from "firebase/firestore";
 import { firebaseConfig } from '../../config/firebase'
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth'
+import { firebase } from '../../config/firebases'
 
 export default function Profile({navigation}){
 //current user
 const auth = getAuth()
 const currentuser = auth.currentUser
+const [refreshing, setRefreshing] = useState(false);
+const [statusPub, setStatusPub] = useState(false);
+
 
 const [cards, setCards] = useState([]);
 const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
 const req = query(collection(db,"Profiles"), where ("Iduser","==",currentuser.uid));
 
+const fetchDatas = async () => {
+  const profil = []
+    const querySnapshot = await getDocs(req);
+    querySnapshot.forEach((doc) => {
+        const {Firstname,City,LastDiploma,Profession,YearOfExp,ImageUrl,Publish} = doc.data();
+        profil.push({
+          id:doc.id,
+          Firstname,
+          City,
+          LastDiploma,
+          Profession,
+          YearOfExp,
+          ImageUrl,
+          Publish
+        })
+    })
+    //console.log("Data =>",profil)
+    setCards(profil)
+    console.log(profil)
+    setRefreshing(false);
+};
     useEffect (  () => {
-      const fetchDatas = async () => {
-        const profil = []
-          const querySnapshot = await getDocs(req);
-          querySnapshot.forEach((doc) => {
-              const {Firstname,City,LastDiploma,Profession,YearOfExp,ImageUrl} = doc.data();
-              profil.push({
-                id:doc.id,
-                Firstname,
-                City,
-                LastDiploma,
-                Profession,
-                YearOfExp,
-                ImageUrl
-              })
-          })
-          console.log("Data =>",profil)
-          setCards(profil)
-      };
       fetchDatas();     
    },[])
+
+   const handleRefresh = () => {
+    setRefreshing(true);
+    fetchDatas();
+  };
+
+
+
+  const Publishe = async (id) => {
+      if(statusPub == false){
+        setStatusPub(true)
+      }else{
+        setStatusPub(false)
+      }
+      console.log(statusPub)
+      //updatedata(id)
+  }
+
+  const updatedata = (refDoc) =>{
+    const docRef = firebase.firestore().collection('Profiles').doc(refDoc)
+ docRef.update({
+    Publish : statusPub
+  })
+  .then(() => {
+        if(statusPub===true){
+          console.log("Document mis à jour avec succès !");
+           Alert.alert('information','le profil a été publier')
+        }else{
+          console.log("Document mis à jour avec succès !");
+           Alert.alert('information','le profil a été retirer')
+        }
+    
+  })
+  .catch((error) => {
+    console.log("Erreur lors de la mise à jour du document :", error);
+  })
+
+}
+  
+
 
     const dialogBoite = (id) =>{
       Alert.alert(
@@ -77,7 +125,11 @@ const req = query(collection(db,"Profiles"), where ("Iduser","==",currentuser.ui
         </TouchableOpacity>
       </View>
       <View>
-      <ScrollView>
+      <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }
+      >
       {cards.map((card,index) => (
         <View key = {index}>
           <TouchableOpacity style = {styles.cards} onPress={() => navigation.navigate('renderprofil',card.id)}>
@@ -103,7 +155,12 @@ const req = query(collection(db,"Profiles"), where ("Iduser","==",currentuser.ui
               <Ionicons name= "trash-sharp" size = {25} color="orangered"/>
               </TouchableOpacity>
               <TouchableOpacity style = {styles.send}>
-              <Ionicons name= "send-sharp" size = {25} color="orangered"/>
+              {/*statusPub?(
+                    <Ionicons name= "send-sharp" size = {25} color="orangered" onPress={() => Publishe(card.id)}/>
+            ):(
+                   <Ionicons name= "remove-circle" size = {25} color="orangered" onPress={Publishe}/>
+            )*/}
+              <Ionicons name= "send-sharp" size = {25} color="orangered" onPress={() => Publishe(card.id)}/>
               </TouchableOpacity>
           </View>
         </View>

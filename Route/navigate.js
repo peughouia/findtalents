@@ -11,7 +11,6 @@ import Addprofile from "../App/Candidate/addprofile";
 import UpdateProfil from "../App/Candidate/UpdateProfil";
 import RenderProfil from "../App/Candidate/RenderProfil";
 import Transit from "../App/Auth/Transit";
-import tes from "../App/Candidate/tes";
 import SourcePage from "../App/Candidate/test1";
 
 const Stack = createNativeStackNavigator()
@@ -46,8 +45,6 @@ export default function Screenview(){
                 <Stack.Screen component={RenderProfil} name="renderprofil"
                      options={{ headerShown:false}}/> 
 
-                <Stack.Screen component={tes} name="tes"
-                     options={{ headerShown:false}}/>   
 
                 <Stack.Screen component={SourcePage} name="sourcepage"
                      options={{ headerShown:false}}/>   
