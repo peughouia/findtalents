@@ -12,6 +12,8 @@ import UpdateProfil from "../App/Candidate/UpdateProfil";
 import RenderProfil from "../App/Candidate/RenderProfil";
 import Transit from "../App/Auth/Transit";
 import SourcePage from "../App/Candidate/test1";
+import Curriculum from "../App/Candidate/Curriculum";
+import ModelScreen from "../App/Candidate/Cv/ModelScreen";
 
 const Stack = createNativeStackNavigator()
 
@@ -33,7 +35,7 @@ export default function Screenview(){
                 <Stack.Screen component={HomeRecruiter} name="homerecruiter"
                     options={{ headerShown:false }}/>
 
-                <Stack.Screen component={HomeCan} name="homecan"
+                <Stack.Screen component={HomeCan} name="home"
                     options={{ headerShown:false}}/>
 
                 <Stack.Screen component={Profile} name="profile"
@@ -45,13 +47,19 @@ export default function Screenview(){
                 <Stack.Screen component={RenderProfil} name="renderprofil"
                      options={{ headerShown:false}}/> 
 
-
                 <Stack.Screen component={SourcePage} name="sourcepage"
                      options={{ headerShown:false}}/>   
 
                 <Stack.Screen component={UpdateProfil} name="updateprofil"
                      options={{ headerShown:false}}/>   
+
                 <Stack.Screen component={Transit} name="transit"
+                     options={{ headerShown:false}}/> 
+
+                <Stack.Screen component={Curriculum} name="curriculum"
+                     options={{ headerShown:false}}/> 
+
+                <Stack.Screen component={ModelScreen} name="modelscreen"
                      options={{ headerShown:false}}/> 
             </Stack.Navigator>
         </NavigationContainer>

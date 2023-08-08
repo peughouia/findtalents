@@ -5,6 +5,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 //importationde liaison 
 import Profile from "./Profile";
 import HomeCan from "./HomeCan";
+import Curriculum from "./Curriculum";
 import SourcePage from "./test1";
 
 
@@ -19,7 +20,7 @@ export default function HomeCandidate({navigation}){
                     let iconName ;
                     if (route.name == "CV"){
                         iconName = focused ? "document" : "document-outline"
-                    }else if(route.name == "homecan"){
+                    }else if(route.name == "home"){
                         iconName = focused ? 'home' : 'home-outline';
                     }else if(route.name == "Profil"){
                         iconName = focused ? "clipboard" : "clipboard-outline"
@@ -28,9 +29,9 @@ export default function HomeCandidate({navigation}){
                 }
             })}>
 
-            <tab.Screen name ='CV' component={SourcePage} 
+            <tab.Screen name ='CV' component={Curriculum} 
                 options={{ headerShown:false }}/>
-            <tab.Screen name ='homecan' component={HomeCan} 
+            <tab.Screen name ='home' component={HomeCan} 
                 options={{ headerShown:false }}/>
             <tab.Screen name ='Profil' component={Profile} 
                 options={{ headerShown:false }}/>

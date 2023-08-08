@@ -39,17 +39,22 @@ export default function RenderProfil({route}) {
     }, []);   
 
     const downloadPdf = async (url) => {
-       const filename = 'CV.pdf'
-       const result = await FileSystem.downloadAsync(
-            url,
-            FileSystem.documentDirectory + filename
-       );
-        console.log(result)
-        try{
-            save(result.uri);
-        }catch(error){
-            console.log("erreur lors du telechargement",error)
+        if(url===""){
+                Alert.alert('information!!', "aucun pdf disponible")
+        }else{
+        const filename = 'CV.pdf'
+            const result = await FileSystem.downloadAsync(
+                    url,
+                    FileSystem.documentDirectory + filename
+            );
+                console.log(result)
+                try{
+                    save(result.uri);
+                }catch(error){
+                    console.log("erreur lors du telechargement",error)
+            }
         }
+       
     };
 
     const save = async (uri) => {

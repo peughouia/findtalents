@@ -21,7 +21,7 @@ const auth = getAuth()
 const currentuser = auth.currentUser
 const [refreshing, setRefreshing] = useState(false);
 const [statusPub, setStatusPub] = useState(false);
-
+//var statusPub = false
 
 const [cards, setCards] = useState([]);
 const app = initializeApp(firebaseConfig)
@@ -61,13 +61,9 @@ const fetchDatas = async () => {
 
 
   const Publishe = async (id) => {
-      if(statusPub == false){
+     
         setStatusPub(true)
-      }else{
-        setStatusPub(false)
-      }
-      console.log(statusPub)
-      //updatedata(id)
+        updatedata(id)
   }
 
   const updatedata = (refDoc) =>{
@@ -119,7 +115,11 @@ const fetchDatas = async () => {
     return(
     <View style = {styles.container}>
       <View style = {styles.head}>
-        <Text style={styles.title}>profiles</Text>
+        <View style = {styles.log}>
+            <Image style = {styles.logo} source={require("../../assets/Image/FindTalentsred1.jpg")}/>
+            <Text style={styles.title}>profiles</Text>
+        </View>
+        
         <TouchableOpacity onPress={() => navigation.navigate('addprofile')}>
           <Ionicons name= "add-circle-outline" size = {45} color="black"/>
         </TouchableOpacity>
@@ -155,12 +155,7 @@ const fetchDatas = async () => {
               <Ionicons name= "trash-sharp" size = {25} color="orangered"/>
               </TouchableOpacity>
               <TouchableOpacity style = {styles.send}>
-              {/*statusPub?(
-                    <Ionicons name= "send-sharp" size = {25} color="orangered" onPress={() => Publishe(card.id)}/>
-            ):(
-                   <Ionicons name= "remove-circle" size = {25} color="orangered" onPress={Publishe}/>
-            )*/}
-              <Ionicons name= "send-sharp" size = {25} color="orangered" onPress={() => Publishe(card.id)}/>
+                   <Ionicons name= "send-sharp" size = {25} color="orangered" onPress={() => Publishe(card.id)}/>
               </TouchableOpacity>
           </View>
         </View>
@@ -191,6 +186,7 @@ const styles = StyleSheet.create({
     color: 'orangered',
     fontSize: 45,
     fontWeight: 'bold',
+    marginLeft:5
   },
   test:{
     fontSize:50
@@ -284,5 +280,15 @@ exp:{
 icon:{
   alignItems:"center",
   justifyContent:"center"
-}
+},
+log:{
+    flexDirection:'row'
+},
+logo:{
+  width:80,
+  height:45,
+  marginVertical:6,
+  resizeMode: 'cover',
+  borderRadius: 20,
+},
 })

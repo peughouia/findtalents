@@ -117,6 +117,11 @@ export default function Addprofile({ navigation }){
             console.log('Erreur lors du telechargement :',err)
         }
     }
+
+    const test = () => {
+        console.log(pdfUrl)
+    }
+
     //fonction pour recuperer une image a partir de mon appareil
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -157,6 +162,7 @@ export default function Addprofile({ navigation }){
         }
     }
 
+
     //pour recuperer l'url de l'image
     const takeUrlImg = async () => {
         const filename = image.uri.substring(image.uri.lastIndexOf('/') +1);
@@ -195,7 +201,7 @@ export default function Addprofile({ navigation }){
             ):(
                 <Text style = {styles.title}>Add your Profile</Text>
             )}
-            <TouchableOpacity onPress={send}>
+            <TouchableOpacity onPress={test/*send*/}>
             
             <Ionicons name= "save-outline" size = {35} color="white"/>
             </TouchableOpacity>   
