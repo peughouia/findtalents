@@ -4,10 +4,11 @@ import { Text,
          Image,
          TextInput,
          StyleSheet,
+         ScrollView,
          TouchableOpacity,
        } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { getFirestore,doc,getDoc, query, collection, where } from 'firebase/firestore';
+import { getFirestore,doc,getDoc,  } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth'
 import { firebaseConfig } from '../../config/firebase'
 import { initializeApp } from 'firebase/app';
@@ -81,23 +82,41 @@ export default function HomeCan({navigation}){
             <Text style = {styles.txtmessage}>create and post your Profile Pro</Text>
     </View>
 
-      
-
       <View style = {styles.searchContainer}>
         
           <View style = {styles.searchWrapper}>
               <TextInput style = {styles.searchInput}
                 //value=""
                 onChange={() => {}}
-                placeholder='search for one of your profiles'/>
+                placeholder='find the service you need'/>
           </View>
 
           <TouchableOpacity style = {styles.searchBtn} onPress={() => {}}>
              <Ionicons name= "search-outline" size = {35} color="white"/>
           </TouchableOpacity>
-
       </View>
-      
+      <ScrollView style = {styles.scroll}>
+          <View style = {styles.cards}>
+            <Image style= {styles.service}
+                      source={require("../../assets/Image/service1.png")}>
+            </Image>
+          </View>
+          <View style = {styles.cards}>
+            <Image style= {styles.service}
+                      source={require("../../assets/Image/service2.png")}>
+            </Image>
+          </View>
+          <View style = {styles.cards}>
+            <Image style= {styles.service}
+                      source={require("../../assets/Image/service3.png")}>
+            </Image>
+          </View>
+          <View style = {styles.cards}>
+            <Image style= {styles.service}
+                      source={require("../../assets/Image/service4.png")}>
+            </Image>
+          </View>
+      </ScrollView>
     </View>
   );
 }
@@ -178,4 +197,27 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
       },
+      scroll:{
+        backgroundColor:"lightgray",
+        marginTop:15
+      },
+      cards:{
+        margin: 10,
+        backgroundColor:"#fff",
+        fontWeight:"bold",
+        shadowOpacity:0.3,
+        shadowRadius:2,
+        shadowColor:"#333",
+        shadowOffset:{width:1,height:1},
+        elevation:5,
+        borderRadius:20,
+        alignItems:"center"
+      },
+      service:{
+        width:"100%",
+        height:220,
+        resizeMode: 'cover',
+        borderRadius: 20,
+        backgroundColor: 'gray',
+      }
 })

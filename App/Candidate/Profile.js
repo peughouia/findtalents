@@ -61,8 +61,11 @@ const fetchDatas = async () => {
 
 
   const Publishe = async (id) => {
-     
-        setStatusPub(true)
+    if(statusPub === false){
+      setStatusPub(true)
+    }else{
+      setStatusPub(false)
+    }  
         updatedata(id)
   }
 
@@ -72,12 +75,12 @@ const fetchDatas = async () => {
     Publish : statusPub
   })
   .then(() => {
-        if(statusPub===true){
+        if(statusPub === true){
           console.log("Document mis à jour avec succès !");
            Alert.alert('information','le profil a été publier')
         }else{
           console.log("Document mis à jour avec succès !");
-           Alert.alert('information','le profil a été retirer')
+           Alert.alert('information','le profil a été retirer de la file')
         }
     
   })

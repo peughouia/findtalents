@@ -13,12 +13,12 @@ export default function Transit({navigation}) {
       />
       </View>
       <View style = {styles.body}>
-        <Text style ={styles.txt}>log in as?</Text>
+        <Text style ={styles.txt}>what do you want to do?</Text>
         <TouchableOpacity style = {styles.recruiter} onPress={() => navigation.navigate('homerecruiter')}>
-            <Text style = {styles.txtrecruiter}>Recruiter</Text>
+            <Text style = {styles.txtrecruiter}>Recruit</Text>
         </TouchableOpacity>
         <TouchableOpacity style = {styles.candidate} onPress={() => navigation.navigate('homecandidate')}>
-            <Text style = {styles.txtcandidate}>Candidate</Text>
+            <Text style = {styles.txtcandidate}>To apply</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     },
     txt:{
         color:"black",
-        fontSize:50,
+        fontSize:35,
         fontWeight:"bold",
         textAlign:"center",
         margin:10

@@ -73,24 +73,88 @@ export default function RenderProfil({route}) {
                     //source={require('../../assets/Image/font1.jpg')
                 }/>
                     <View style ={styles.header}>
-                    <Text style ={styles.txthead}>Professionnal</Text>
+                    <Text style ={styles.txthead}>Professional</Text>
                     <Text style ={styles.txthead}>Profiles:
                     <Text style = {styles.txtpro}> {users.Profession}</Text>
                     </Text>
                     </View>
                 </View>
                 <View>
-                    <Text style = {styles.text}>Firstname :<Text style = {styles.text1}>{users.Firstname}</Text> </Text>
-                    <Text style = {styles.text}>Lastname : {users.Lastname}</Text>
-                    <Text style = {styles.text}>city : {users.City}</Text>
-                    <Text style = {styles.text}>Language : {users.Language}</Text>
-                    <Text style = {styles.text}>Phone : {users.Phone}</Text>
-                    <Text style = {styles.text}>Email : {users.Email}</Text>
-                    <Text style = {styles.text}>Last Diploma : {users.LastDiploma}</Text>
-                    <Text style = {styles.text}>Profession : {users.Profession}</Text>
-                    <Text style = {styles.text}>Year of Profession : {users.YearOfExp} years</Text>
-                    <Text style = {styles.text}>small description : {users.Description} years</Text>
+                    <View style = {styles.title}>
+                        <Text style = {styles.txttitle}>Personal informations</Text>
+                    </View>
+            
+                    <View>
+                        <Text style = {styles.text}>Firstname :
+                            <Text style = {styles.text1}> {users.Firstname}</Text> 
+                        </Text>
+                        <View style= {{alignItems:"center"}}><Text style = {styles.separator}></Text></View>
+                    </View>
+
+                    <View>
+                        <Text style = {styles.text}>Lastname :
+                            <Text style = {styles.text1}> {users.Lastname}</Text> 
+                        </Text>
+                        <View><Text style = {styles.separator}></Text></View>
+                    </View>
+
+                    <View>
+                        <Text style = {styles.text}>City :
+                            <Text style = {styles.text1}> {users.City}</Text> 
+                        </Text>
+                        <View><Text style = {styles.separator}></Text></View>
+                    </View>
+
+                    <View>
+                        <Text style = {styles.text}>Language :
+                            <Text style = {styles.text1}> {users.Language}</Text> 
+                        </Text>
+                        <View><Text style = {styles.separator}></Text></View>
+                    </View>
+
+                    <View>
+                        <Text style = {styles.text}>Phone :
+                            <Text style = {styles.text1}> {users.Phone}</Text> 
+                        </Text>
+                        <View><Text style = {styles.separator}></Text></View>
+                    </View>
+                
+                    <View>
+                        <Text style = {styles.text}>Email :
+                            <Text style = {styles.text1}> {users.Email}</Text> 
+                        </Text>
+                        <View><Text style = {styles.separator}></Text></View>
+                    </View>
+            
+                    <View>
+                        <Text style = {styles.text}>Last degree :
+                            <Text style = {styles.text1}> {users.LastDiploma}</Text> 
+                        </Text>
+                        <View><Text style = {styles.separator}></Text></View>
+                    </View>
+
+                    <View>
+                        <Text style = {styles.text}>Profession :
+                            <Text style = {styles.text1}> {users.Profession}</Text> 
+                        </Text>
+                        <View><Text style = {styles.separator}></Text></View>
+                    </View>
+
+                    <View>
+                        <Text style = {styles.text}>Year of Profession :
+                            <Text style = {styles.text1}> {users.YearOfExp} year(s)</Text> 
+                        </Text>
+                        <View><Text style = {styles.separator}></Text></View>
+                    </View>
+                    <View style = {styles.descript}>
+                        <Text style = {styles.text}>Profil description</Text>
+                        <View style = {styles.carddescript}>
+                            <Text style = {styles.txtdescript}>{users.Description}</Text>
+                        </View>
+                    </View>
+                    
                 </View>
+                <Text style = {styles.space}></Text> 
             </ScrollView>
                 <View style = {styles.bottom}>
                     <TouchableOpacity style = {styles.vbouton}>
@@ -116,7 +180,7 @@ const styles = StyleSheet.create({
     },
     card:{
         margin: 10,
-        padding: 15,
+        padding: 10,
         borderRadius:20,
         elevation:5,
         backgroundColor:"#fff",
@@ -130,24 +194,26 @@ const styles = StyleSheet.create({
     head:{
         flexDirection:"row",
         justifyContent:'space-between',
-        marginBottom:10
+        marginBottom:10,
+       
     },
     header:{
         justifyContent:"center",
         flexGrow:1,
         width:50,
+       
     },
     txthead:{
         fontWeight:"700",
-        fontSize:25,
-        marginLeft:10
+        fontSize:22,
+        marginLeft:8
     },
     enter:{
         marginHorizontal:10,
         marginVertical:10
     },
     img:{
-        width:120,
+        width:115,
         height:100,
         marginVertical:6,
         resizeMode: 'cover',
@@ -155,12 +221,13 @@ const styles = StyleSheet.create({
         backgroundColor: 'gray',
     },
     text:{
-        fontSize:25,
-        marginBottom:12,
+        fontSize:20,
+        margin:9,
+        fontWeight:"bold"
     },
     text1:{
         fontSize:20,
-        fontWeight:'bold',
+        fontWeight:"300"
     },
     txtpro:{
         color:'orangered'
@@ -185,5 +252,42 @@ const styles = StyleSheet.create({
         flexDirection:"row",
         justifyContent:"space-between",
         marginRight:10
+    },
+    title:{
+        backgroundColor:"lightgray",
+        alignItems:'center',
+        height:"6%",
+        justifyContent:'center',
+        marginBottom:5
+    },
+    txttitle:{
+        fontSize:20,
+        fontWeight:"bold",
+        color:"orangered"
+    },
+    separator:{
+        height: 1,
+        width: '100%',
+        backgroundColor: 'lightgray',
+    },
+    descript:{
+        alignItems:"center"
+    },
+    txtdescript:{
+        margin:10,
+        fontSize:18,
+        fontWeight:"400"
+    },
+    carddescript:{
+        borderRadius:20,
+        elevation:3,
+        backgroundColor:"#ccc",
+        shadowOffset:{width:0,height:2},
+        shadowColor:"black",
+        shadowOpacity:0.9,
+        shadowRadius:2,
+    },
+    space:{
+        marginTop:20
     }
 })

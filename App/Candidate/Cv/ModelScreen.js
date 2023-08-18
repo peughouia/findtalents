@@ -13,11 +13,11 @@ export default function ModelScreen({navigation}) {
       </View>
         <ScrollView style ={styles.contain}>
                 <View style ={styles.ligne}>
-                    <TouchableOpacity style ={styles.card}>
+                    <TouchableOpacity style ={styles.card} onPress={() => navigation.navigate('imgcv1')}>
                         <Image style = {styles.sizecv} source={require("../../../assets/Image/CvTalent1.png")}/>
                         <Text  style = {styles.txtcv} >Cv Talent 1</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style ={styles.card}>
+                    <TouchableOpacity style ={styles.card} onPress={() => navigation.navigate('cvtalent2')}>
                         <Image style = {styles.sizecv} source={require("../../../assets/Image/CvTalent2.png")}/>
                         <Text  style = {styles.txtcv} >Cv Talent 2</Text>
                     </TouchableOpacity>

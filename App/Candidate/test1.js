@@ -1,50 +1,56 @@
 import React, { useState } from 'react';
-import { Button,Text,StyleSheet,View, TextInput,TouchableOpacity, Alert } from 'react-native';
-import { firebase } from '../../config/firebases'
+import { View, TextInput, ScrollView,StyleSheet, Text } from 'react-native';
+
 
 const SourcePage = ({ navigation }) => {
+  const [searchText, setSearchText] = useState('');
+  const [datas, setDatas] = useState ([
+    { id: '1', nom: 'Peughouia 1', categorie: 'Catégorie 1' },
+    { id: '2', nom: 'fred', categorie: 'Catégorie 2' },
+    { id: '3', nom: 'tanko fred', categorie: 'Catégorie 1' },
+    { id: '4', nom: 'kaze cedric', categorie: 'Catégorie 3' },
+    { id: '5', nom: 'nkuete ben', categorie: 'Catégorie 2' },
+  ])
+  const [data, setData] = useState([
+    'Peughouia',
+    'Kaze 2',
+    'Tanko 3',
+    'Peughouia 4',
+    'Nkuete 5 kaze',
+  ]);
 
-  const [nom,setNom] = useState("");
-  const [prenom,setPrenom] = useState("");
-
-  const updates = () => {
-    const docRef = firebase.firestore().collection('Profiles').doc('Ac7etwZ82cVjElOlft5T')
-     docRef.update({
-             Firstname:nom,
-             Lastname:prenom,
-      })
-      .then(() => {
-        console.log("Document mis à jour avec succès !");
-        Alert.alert('information','mise a jour reussie')
-        setNom(''),
-        setPrenom('')
-      })
-      .catch((error) => {
-        console.log("Erreur lors de la mise à jour du document :", error);
-      })
-  }
+    
+    const filteredData = datas.filter(item => {
+      return item.nom.toLowerCase().includes(searchText.toLowerCase()) &&
+              item.categorie.toLowerCase().includes(searchText.toLowerCase()) 
+    });
+   
   
-
+  /*const filteredData = data.filter(element =>
+    element.toLowerCase().includes(searchText.toLowerCase())
+  );*/
   return (
-    <View style = {styles.container}>
+    
+    <View style={styles.container}>
       <TextInput
-        style = {styles.textinput}
-        placeholder='nom'
-        value = { nom }
-        onChangeText = {(text) => setNom(text)}
+        style={{ height: 40,width:210, borderColor: 'gray', borderWidth: 1, margin: 10 }}
+        value={searchText}
+        placeholder="Recherche..."
+        onChangeText={text => setSearchText(text)}
       />
-      <TextInput
-        style = {styles.textinput}
-        placeholder='Prenom'
-        value = { prenom }
-        onChangeText = {(text) => setPrenom(text)}
-      />
-      <TouchableOpacity onPress={updates}>
-        <Text>update</Text>
-      </TouchableOpacity>
+   
+      <ScrollView>
+        {filteredData.map((element,index) => (
+          <View key={index}>
+            <Text >{element.nom}</Text>
+            <Text >{element.categorie}</Text>
+          </View>
+          
+        ))}
+      </ScrollView>
     </View>
-  );
-};
+
+  );};
 
 export default SourcePage;
 
@@ -54,7 +60,6 @@ const styles = StyleSheet.create({
   container:{
       flex:1,
       alignItems:"center",
-      justifyContent:"center",
       marginTop:15
   },
   textinput:{
@@ -68,3 +73,4 @@ const styles = StyleSheet.create({
         paddingHorizontal:16,
   }
   });
+

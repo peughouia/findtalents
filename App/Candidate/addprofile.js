@@ -30,9 +30,10 @@ export default function Addprofile({ navigation }){
            diploma === "" || phone === "" || experience === "" || description === ""){
             Alert.alert('Champ Vide !!', 'veuillez remplir tout les champs svp');
            }else{
-            uploadImage()
+            uploadFile()
            }
         }
+
     const [borderColor, setBorderColor] = useState('#ccc');
     const [isLoading, setIsLoading] = useState(false);
     const [publish, setPublish] = useState(false);
@@ -90,6 +91,7 @@ export default function Addprofile({ navigation }){
     //fonction pour recuperer un fichier a partir de mon appareil
     const uploadFile = async () => {
         try{
+            Alert.alert("Information","vous allez ajouter votre CV en PDF")
             const file = await DocumentPicker.getDocumentAsync({
                 type:'application/pdf'
             });
@@ -110,6 +112,7 @@ export default function Addprofile({ navigation }){
                     .getDownloadURL()
                     .then((url) => {
                         console.log(url)
+                        uploadImage(url)
                     })
                     setIsLoading(false)
             }
@@ -118,9 +121,7 @@ export default function Addprofile({ navigation }){
         }
     }
 
-    const test = () => {
-        console.log(pdfUrl)
-    }
+    
 
     //fonction pour recuperer une image a partir de mon appareil
     const pickImage = async () => {
@@ -135,7 +136,7 @@ export default function Addprofile({ navigation }){
         setImage(src);
     }
     //fonction pour envoyer l'image sur firebase
-    const uploadImage = async () => {
+    const uploadImage = async (url) => {
         if(image == null){
             Alert.alert('Image','veuillez ajouter une image svp')
         }else{
@@ -148,7 +149,7 @@ export default function Addprofile({ navigation }){
         try{
                 await ref;
                 console.log("image uploader")
-                takeUrlImg()
+                takeUrlImg(url)
                 setIsLoading(false)
                 Alert.alert("Information","Enregistrement reussi",[
                     {text:'OK',onPress: () => navigation.goBack()}
@@ -164,14 +165,14 @@ export default function Addprofile({ navigation }){
 
 
     //pour recuperer l'url de l'image
-    const takeUrlImg = async () => {
+    const takeUrlImg = async (urlpdf) => {
         const filename = image.uri.substring(image.uri.lastIndexOf('/') +1);
         var storageref = firebase.storage().ref();
         await storageref.child('images/'+filename)
         .getDownloadURL()
         .then( function(url){
               console.log(url)
-              addProfile(userId,url,pdfUrl)
+              addProfile(userId,url,urlpdf)
         }).catch(function(error){
                 console.log("impossible",error)
         })
@@ -201,7 +202,7 @@ export default function Addprofile({ navigation }){
             ):(
                 <Text style = {styles.title}>Add your Profile</Text>
             )}
-            <TouchableOpacity onPress={test/*send*/}>
+            <TouchableOpacity onPress={send}>
             
             <Ionicons name= "save-outline" size = {35} color="white"/>
             </TouchableOpacity>   
@@ -253,7 +254,7 @@ export default function Addprofile({ navigation }){
                          placeholder="Enter your Lastname" 
                          value = { lastname }
                          onChangeText = {(text) => setLastname(text)}
-                        />
+                     work   />
                     </View>
 
                     <View style={[styles.inputContainer,{ borderColor: borderColor }]}>
@@ -470,7 +471,6 @@ const styles = StyleSheet.create({
 
     txtnom:{
         alignItems:"center",
-        
         fontSize:20,
         marginBottom:5,
         fontWeight:"bold"
@@ -517,8 +517,6 @@ const styles = StyleSheet.create({
         marginLeft:30,
         marginTop:25,
         margin:10,
-       //borderRightWidth:1,
-       //borderLeftWidth:1,
         borderBottomRightRadius: 1,
         borderBottomLeftRadius: 1,
       },

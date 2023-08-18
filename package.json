@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo/webpack-config": "^18.0.1",
+    "@react-native-community/datetimepicker": "6.7.3",
     "@react-native-firebase/app": "^18.1.0",
     "@react-native-firebase/auth": "^18.1.0",
     "@react-native-firebase/firestore": "^18.1.0",
@@ -22,6 +23,7 @@
     "expo-document-picker": "~11.2.2",
     "expo-font": "~11.1.1",
     "expo-image-picker": "~14.1.1",
+    "expo-print": "~12.2.1",
     "expo-sharing": "~11.2.2",
     "expo-status-bar": "~1.4.4",
     "file-system": "^2.2.2",

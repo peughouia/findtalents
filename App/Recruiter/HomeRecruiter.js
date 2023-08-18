@@ -33,6 +33,8 @@ export default function HomeRecruiter({navigation}){
     //pour profil
     const [cards, setCards] = useState([]);
     const req = query(collection(db,"Profiles"), where ("Publish","==",true));
+    const [searchText, setSearchText] = useState('');
+
 
     const fetchDatas = async () => {
       try{
@@ -84,6 +86,13 @@ export default function HomeRecruiter({navigation}){
       setRefreshing(true);
       fetchDatas();
     };
+
+    const filteredData = cards.filter(item =>{
+      return item.Profession.toLowerCase().includes(searchText.toLowerCase())
+      || item.YearOfExp.toLowerCase().includes(searchText.toLowerCase())
+      || item.LastDiploma.toLowerCase().includes(searchText.toLowerCase())
+      || item.City.toLowerCase().includes(searchText.toLowerCase())
+    });
   
 
     return(
@@ -114,22 +123,18 @@ export default function HomeRecruiter({navigation}){
       </View>
 
       <View style = {styles.searchContainer}>
-          <View style = {styles.searchWrapper}>
-              <TextInput style = {styles.searchInput}
-                //value=""
-                onChange={() => {}}
-                placeholder='search for one of your profiles'/>
-          </View>
-          <TouchableOpacity style = {styles.searchBtn} onPress={() => {}}>
-             <Ionicons name= "search-outline" size = {35} color="white"/>
-          </TouchableOpacity>
+              <TextInput style = {styles.diplome}
+                placeholder='search by degree, profession, city, exp..'
+                value={searchText}
+                onChangeText={text => setSearchText(text)}
+                />
       </View>
       <ScrollView style = {styles.scroll}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
       }
       >
-      {cards.map((card,index) => (
+      {filteredData.map((card,index) => (
         <View key = {index}>
       <TouchableOpacity style = {styles.cards} onPress={() => navigation.navigate('renderprofil',card.id)}>
                   <View style = {styles.image}>
@@ -138,12 +143,13 @@ export default function HomeRecruiter({navigation}){
                   </View>
                   <View style = {styles.texte}>
                       <Text style = {styles.nom}>Name: {card.Firstname}</Text>
-                      <Text style = {styles.ville}>City: {card.City}</Text>
-                      <Text style = {styles.diploma}>Last Diploma: {card.LastDiploma}</Text>
                       <Text style = {styles.profession}>
                         Profession: {card.Profession}
                        <Text style = {styles.exp}> Since {card.YearOfExp} years Exp</Text>
                       </Text>
+                      <Text style = {styles.ville}>City: {card.City}</Text>
+                      <Text style = {styles.diploma}>Last Diploma: {card.LastDiploma}</Text>
+                      
                   </View>
           </TouchableOpacity>
         </View>
@@ -207,33 +213,22 @@ const styles = StyleSheet.create({
         top:10
     },
     searchContainer: {
-        justifyContent: "center",
         alignItems: "center",
-        flexDirection: "row",
-        marginTop:20,
-        height: 50,
+        height:40
       },
-      searchWrapper: {
-        flex: 1,
-        backgroundColor: "#ccc",
-        marginRight:10,
-        marginLeft:12,
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 16,
-        height: "100%",
-      },
-      searchInput: {
-        width: "100%",
-        height: "100%",
-        paddingHorizontal:16,
+      diplome:{
+        height:40,
+        borderRadius:10,
+        paddingStart:10,
+        fontSize:17,
+        backgroundColor:"lightgray",
+        width:"90%"
       },
       searchBtn: {
         width: 50,
         height: "100%",
         marginRight:10,
         backgroundColor: "orangered",
-        //backgroundColor: "#FF7754",
         borderRadius: 16,
         justifyContent: "center",
         alignItems: "center",
@@ -280,7 +275,7 @@ const styles = StyleSheet.create({
       fontSize:18,
     },
     profession:{
-      fontSize:14,
+      fontSize:18,
       fontWeight:'bold'
     },
     exp:{
