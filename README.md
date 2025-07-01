@@ -33,7 +33,7 @@
 
 1. **Cloner le projet**
    ```sh
-   git clone https://github.com/votre-utilisateur/findtalent.git
+   git clone https://github.com/peughouia/findtalents.git
    cd findtalent
    npm install
    npx expo start
